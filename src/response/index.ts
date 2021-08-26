@@ -37,10 +37,11 @@ const getTotalRequestsServed = (): number => totalRequestsServed
 type requestLog = [id: number, method: string, path: string, ip: string]
 
 type responseLog =
-  | [id: number, httpCode: number, code: string | number, message: string, rs: number, pt: number]
-  | [id: number, httpCode: number, redirect: string]
+  | [id: number, httpCode: number, code: string | number, message: string, rs: number, pt: number] // json | error
+  | [id: number, httpCode: number, redirect: string] // redirect
+  | [id: number, httpCode: number, template: string, rs: number] // template
 
-const print = (type: 'REQ' | 'JSN' | 'ERR' | 'RDR', content: requestLog | responseLog) => {
+const print = (type: 'REQ' | 'JSN' | 'TPL' | 'ERR' | 'RDR', content: requestLog | responseLog) => {
   const prefix: any = [type, new Date().toISOString()]
 
   if (SFE_SID) prefix.push(SFE_SID)
@@ -56,6 +57,9 @@ const print = (type: 'REQ' | 'JSN' | 'ERR' | 'RDR', content: requestLog | respon
         console.log(chalk.blueBright(log))
         break
       case 'JSN':
+        console.log(chalk.greenBright(log))
+        break
+      case 'TPL':
         console.log(chalk.greenBright(log))
         break
       case 'ERR':
@@ -103,7 +107,7 @@ interface params {
   httpCode?: number
   success?: boolean
   message?: string
-  redirect?: string
+  path?: string
   error?: Error
   payload?: any
 }
@@ -117,12 +121,13 @@ interface response {
 }
 
 const json = (params: params): void => responseHandler(params, 'json')
+const template = (params: params): void => responseHandler(params, 'template')
 const error = (params: params): void => responseHandler(params, 'error')
 const redirect = (params: params): void => responseHandler(params, 'redirect')
 
 const setIfUndefined = (value: any, alt: any) => (value === undefined ? alt : value)
 
-const responseHandler = (params: params, responseType: 'json' | 'error' | 'redirect') => {
+const responseHandler = (params: params, responseType: 'json' | 'error' | 'redirect' | 'template') => {
   if (params.req.dead) return
   params.req.dead = true
 
@@ -139,12 +144,14 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
 
   params.res.type('application/json')
 
-  let response: response,
+  let response: Partial<response> = {},
     httpCode: number,
     message = '',
-    redirect: string,
+    path: string,
     code: string | number,
     log: responseLog
+
+  if (SFE_SID) response.sid = SFE_SID
 
   switch (responseType) {
     case 'json':
@@ -160,8 +167,6 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
         message,
         payload
       }
-
-      if (SFE_SID) response.sid = SFE_SID
 
       params.res.status(httpCode).json(response).end()
 
@@ -199,12 +204,25 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
     case 'redirect':
       httpCode = params.httpCode || 302
 
-      redirect = setIfUndefined(params.redirect, '/')
+      path = setIfUndefined(params.path, '/')
 
-      params.res.status(302).redirect(redirect)
+      params.res.status(302).redirect(path)
 
-      log = [id, httpCode, redirect]
+      log = [id, httpCode, path]
       print('RDR', log)
+
+      break
+
+    case 'template':
+      httpCode = params.httpCode || 200
+
+      if (!params.path) throw new Error(`Path in template type response can not be empty`)
+
+      params.res.set('content-type', 'text/html')
+      params.res.status(httpCode).render(params.path, params.payload)
+
+      log = [id, httpCode, params.path, responseSize]
+      print('TPL', log)
 
       break
   }
@@ -245,6 +263,7 @@ const size = (obj: any) => {
 export default {
   init,
   json,
+  template,
   error,
   redirect,
   getRPS,

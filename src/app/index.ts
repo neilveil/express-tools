@@ -6,12 +6,10 @@ import core, { haltCheck } from '../core'
 import response from '../response'
 
 const NODE_ENV = process.env.NODE_ENV
+const SFE_DELAY = parseInt(process.env.SFE_DELAY || '0')
 const SFE_CORE_KEY = process.env.SFE_CORE_KEY || (NODE_ENV === 'sfe-test' ? 'core' : '')
 
 export default (): express.Application => {
-  const SFE_DELAY = parseInt(process.env.SFE_DELAY || '0')
-  const SFE_STATIC = process.env.SFE_STATIC
-
   const app: express.Application = express()
 
   if (NODE_ENV !== 'sfe-test') {
@@ -28,7 +26,7 @@ export default (): express.Application => {
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
 
-  if (SFE_STATIC) app.use(express.static(SFE_STATIC))
+  app.set('view engine', 'ejs')
 
   // eslint-disable-next-line
   app.use((error: Error, req: express.Request, res: express.Response, next: express.NextFunction) =>

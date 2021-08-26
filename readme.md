@@ -78,12 +78,6 @@ Print full error stack on error response.
 
 ---
 
-`SFE_STATIC`
-
-Static directory from which you want to serve you assets. E.g. `SFE_STATIC = public`
-
----
-
 `SFE_AUTH_TOKEN`
 
 Token to access core APIs. Assume if your token is `SFE_AUTH_TOKEN = test`, then you need to pass `098f6bcd4621d373cade4e832627b4f6` as `Authorization` header key. `md5('test') = '098f6bcd4621d373cade4e832627b4f6'`
