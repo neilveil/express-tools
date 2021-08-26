@@ -2,7 +2,7 @@ import './index'
 
 const SFE_VAR = process.env.SFE_VAR
 
-const expectedValue = 'Fast Express'
+const expectedValue = 'Express Tools'
 
 describe('Test a dummy environment variable value', () => {
   test(`"SFE_VAR" should be equal to "expectedValue"`, () => {

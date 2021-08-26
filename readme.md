@@ -1,6 +1,6 @@
-# Fast Express
+# Express Tools
 
-The zero configuration scalable & secure API server with statistics, status control, response handler, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.
+Scalable & secure API server with statistics, status control, response handler, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.
 
 ## Features
 
@@ -183,7 +183,7 @@ const {
   _md5,
   _encrypt,
   _decrypt,
-} = require('fast-express')
+} = require('express-tools')
 
 const port = process.env.PORT
 

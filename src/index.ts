@@ -1,8 +1,6 @@
 import './env'
 
-// Core
-export { default as app } from './app'
-
+// Server
 import server from './server'
 export { server }
 export default server
