@@ -1,0 +1,14 @@
+{
+  "name": "fast-express",
+  "description": "The zero configuration scalable & secure API server with statistics, status control, response handler, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.",
+  "author": "neilveil",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "joi": "^17.4.1"
+  }
+}
