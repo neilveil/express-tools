@@ -6,13 +6,13 @@ import _md5 from '../md5'
 import { EMPTY_REQUEST } from '../validate'
 
 const NODE_ENV = process.env.NODE_ENV
-const SFE_AUTH_TOKEN = process.env.SFE_AUTH_TOKEN
-const SFE_AUTH_URL = process.env.SFE_AUTH_URL
+const ET_AUTH_TOKEN = process.env.ET_AUTH_TOKEN
+const ET_AUTH_URL = process.env.ET_AUTH_URL
 
 const router = express.Router()
 
 let HALT_OPERATIONS = false
-const authTokenHash = _md5(SFE_AUTH_TOKEN || '')
+const authTokenHash = _md5(ET_AUTH_TOKEN || '')
 
 const auth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
@@ -23,12 +23,12 @@ const auth = async (req: express.Request, res: express.Response, next: express.N
     // password => md5('sfe-test')
     if (NODE_ENV === 'sfe-test' && authorization === '3a2e220599e52604367646b8a5a7dedf') return next()
 
-    if (SFE_AUTH_TOKEN && authTokenHash === authorization) return next()
+    if (ET_AUTH_TOKEN && authTokenHash === authorization) return next()
 
-    if (SFE_AUTH_URL) {
+    if (ET_AUTH_URL) {
       const authAPI = await axios({
         method: 'post',
-        url: SFE_AUTH_URL,
+        url: ET_AUTH_URL,
         headers: {
           authorization
         }

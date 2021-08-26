@@ -66,58 +66,58 @@ Defines which environment file you want to use. Default is `.env`.
 
 ---
 
-`SFE_LOGS` (yes | no) Default: no
+`ET_LOGS` (yes | no) Default: no
 
 Print request and response logs.
 
 ---
 
-`SFE_DEBUG` (yes | no) Default: no
+`ET_DEBUG` (yes | no) Default: no
 
 Print full error stack on error response.
 
 ---
 
-`SFE_AUTH_TOKEN`
+`ET_AUTH_TOKEN`
 
-Token to access core APIs. Assume if your token is `SFE_AUTH_TOKEN = test`, then you need to pass `098f6bcd4621d373cade4e832627b4f6` as `Authorization` header key. `md5('test') = '098f6bcd4621d373cade4e832627b4f6'`
+Token to access core APIs. Assume if your token is `ET_AUTH_TOKEN = test`, then you need to pass `098f6bcd4621d373cade4e832627b4f6` as `Authorization` header key. `md5('test') = '098f6bcd4621d373cade4e832627b4f6'`
 
 ---
 
-`SFE_AUTH_URL`
+`ET_AUTH_URL`
 
 To authenticate server from other server. Authorization header is forwared to this url and it should return 200 for successful authentication.
 
 ---
 
-`SFE_CORE_KEY`
+`ET_CORE_KEY`
 
-Key at which you want to host core APIs. If `SFE_CORE_KEY = core` then your status API url will be `{host}/core/status`
+Key at which you want to host core APIs. If `ET_CORE_KEY = core` then your status API url will be `{host}/core/status`
 
 ---
 
-`SFE_PERSISTENT_ID` (yes | no) Default: no
+`ET_PERSISTENT_ID` (yes | no) Default: no
 
 Each response returned from the server has an unique integral ID. But it's stored in the memory, so when the server restarts it again starts from 1. So to persist it's value, it need to be stored on the server which creates a `.sfe` at root of the project.
 
 ---
 
-`SFE_SID`
+`ET_SID`
 
-All response ID will always be unique if `SFE_PERSISTENT_ID` is `yes`, but if you are running multiple containers of your application then the request ID will again clash as all the servers will start the ID from 0. So to bind each response with an unique ID, a server ID need to attached with each response. And now using this information, server from which the response was served and the response can be uniquely tracked.
+All response ID will always be unique if `ET_PERSISTENT_ID` is `yes`, but if you are running multiple containers of your application then the request ID will again clash as all the servers will start the ID from 0. So to bind each response with an unique ID, a server ID need to attached with each response. And now using this information, server from which the response was served and the response can be uniquely tracked.
 
-For e.g. while running multiple containers of your application with docker, container ID can be used as server ID which you find as `HOSTNAME` environment variable in your application. So to set server server ID you just need to do `process.env.SFE_SID = process.env.HOSTNAME` at the top of your main enrty file of your application.
+For e.g. while running multiple containers of your application with docker, container ID can be used as server ID which you find as `HOSTNAME` environment variable in your application. So to set server server ID you just need to do `process.env.ET_SID = process.env.HOSTNAME` at the top of your main enrty file of your application.
 
 ---
 
-`SFE_ENC_KEY`
-`SFE_ENC_IV`
+`ET_ENC_KEY`
+`ET_ENC_IV`
 
 Set these to use `_encrypt` & `_decrypt` helpers.
 
 ---
 
-`SFE_DELAY`
+`ET_DELAY`
 
 To add a custom delay in all request served from the server in milliseconds. Very helpful in development mode to test the impact of slow API response on the application.
 
@@ -135,7 +135,7 @@ node_modules
 ## Core API
 
 ```
-SFE_CORE_KEY = core
+ET_CORE_KEY = core
 ```
 
 ---

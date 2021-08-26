@@ -1,8 +1,8 @@
 import fs from 'fs'
 
-const SFE_SID = process.env.SFE_SID || ''
+const ET_SID = process.env.ET_SID || ''
 
-const filepath = (SFE_SID ? `.${SFE_SID}` : '') + '.sfe'
+const filepath = (ET_SID ? `.${ET_SID}` : '') + '.sfe'
 
 const defaultData = {
   id: 0

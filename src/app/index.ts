@@ -6,8 +6,8 @@ import core, { haltCheck } from '../core'
 import response from '../response'
 
 const NODE_ENV = process.env.NODE_ENV
-const SFE_DELAY = parseInt(process.env.SFE_DELAY || '0')
-const SFE_CORE_KEY = process.env.SFE_CORE_KEY || (NODE_ENV === 'sfe-test' ? 'core' : '')
+const ET_DELAY = parseInt(process.env.ET_DELAY || '0')
+const ET_CORE_KEY = process.env.ET_CORE_KEY || (NODE_ENV === 'sfe-test' ? 'core' : '')
 
 export default (): express.Application => {
   const app: express.Application = express()
@@ -41,9 +41,9 @@ export default (): express.Application => {
 
   app.use(response.init)
 
-  if (SFE_DELAY) app.use((req, res, next) => setTimeout(next, SFE_DELAY))
+  if (ET_DELAY) app.use((req, res, next) => setTimeout(next, ET_DELAY))
 
-  if (SFE_CORE_KEY) app.use('/' + SFE_CORE_KEY, core)
+  if (ET_CORE_KEY) app.use('/' + ET_CORE_KEY, core)
 
   app.use(haltCheck)
 

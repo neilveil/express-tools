@@ -1,19 +1,19 @@
 import crypto from 'crypto'
 
-const SFE_ENC_KEY = process.env.SFE_ENC_KEY || ''
-const SFE_ENC_IV = process.env.SFE_ENC_IV || ''
+const ET_ENC_KEY = process.env.ET_ENC_KEY || ''
+const ET_ENC_IV = process.env.ET_ENC_IV || ''
 const NODE_ENV = process.env.NODE_ENV
 
 const _resize = (data: string, size: number, fill = 'X') =>
   data.substr(0, size) + fill.repeat(size - data.substr(0, size).length)
 
-const isEnabled = (SFE_ENC_KEY && SFE_ENC_IV) || NODE_ENV === 'sfe-test' ? true : false
+const isEnabled = (ET_ENC_KEY && ET_ENC_IV) || NODE_ENV === 'sfe-test' ? true : false
 
-const KEY = _resize(SFE_ENC_KEY, 32)
-const IV = _resize(SFE_ENC_IV, 16)
+const KEY = _resize(ET_ENC_KEY, 32)
+const IV = _resize(ET_ENC_IV, 16)
 
 const stop = () => {
-  console.error('Please set SFE_ENC_KEY & SFE_ENC_IV env variables first to use SFE encryption!')
+  console.error('Please set ET_ENC_KEY & ET_ENC_IV env variables first to use SFE encryption!')
   process.exit(1)
 }
 

@@ -3,15 +3,15 @@ import express from 'express'
 
 import cache from '../utils/cache'
 
-const SFE_LOGS = process.env.SFE_LOGS === 'yes' ? true : false
-const SFE_DEBUG = process.env.SFE_DEBUG === 'yes' ? true : false
-const SFE_SID = process.env.SFE_SID || ''
+const ET_LOGS = process.env.ET_LOGS === 'yes' ? true : false
+const ET_DEBUG = process.env.ET_DEBUG === 'yes' ? true : false
+const ET_SID = process.env.ET_SID || ''
 
 const NODE_ENV = process.env.NODE_ENV
 
-const SFE_PERSISTENT_ID = process.env.SFE_PERSISTENT_ID === 'yes' && NODE_ENV !== 'sfe-test' ? true : false
+const ET_PERSISTENT_ID = process.env.ET_PERSISTENT_ID === 'yes' && NODE_ENV !== 'sfe-test' ? true : false
 
-let id = SFE_PERSISTENT_ID ? cache.get('id') || 0 : 0
+let id = ET_PERSISTENT_ID ? cache.get('id') || 0 : 0
 let running = false
 
 const RPS_DURATION = 1000 // milliseconds
@@ -44,14 +44,14 @@ type responseLog =
 const print = (type: 'REQ' | 'JSN' | 'TPL' | 'ERR' | 'RDR', content: requestLog | responseLog) => {
   const prefix: any = [type, new Date().toISOString()]
 
-  if (SFE_SID) prefix.push(SFE_SID)
+  if (ET_SID) prefix.push(ET_SID)
 
   const log =
     prefix.map((x: any) => (x === undefined ? '-' : x)).join(' | ') +
     ' :: ' +
     content.map((x: any) => (x === undefined ? '-' : x)).join(' | ')
 
-  if (SFE_LOGS) {
+  if (ET_LOGS) {
     switch (type) {
       case 'REQ':
         console.log(chalk.blueBright(log))
@@ -82,7 +82,7 @@ const init = (req: express.Request, res: express.Response, next: express.NextFun
 
   totalRequestsServed++
   id++
-  if (SFE_PERSISTENT_ID) cache.set('id', id)
+  if (ET_PERSISTENT_ID) cache.set('id', id)
 
   req.IP = Array.isArray(req.headers['x-forwarded-for'])
     ? req.headers['x-forwarded-for'][0]
@@ -151,7 +151,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
     code: string | number,
     log: responseLog
 
-  if (SFE_SID) response.sid = SFE_SID
+  if (ET_SID) response.sid = ET_SID
 
   switch (responseType) {
     case 'json':
@@ -190,14 +190,14 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
         payload
       }
 
-      if (SFE_SID) response.sid = SFE_SID
+      if (ET_SID) response.sid = ET_SID
 
       params.res.status(httpCode).json(response).end()
 
       log = [id, httpCode, code, message || '-', responseSize, processionTime]
       print('ERR', log)
 
-      if (SFE_DEBUG && params.error?.stack) console.log(chalk.redBright(params.error?.stack))
+      if (ET_DEBUG && params.error?.stack) console.log(chalk.redBright(params.error?.stack))
 
       break
 
