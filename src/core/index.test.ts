@@ -51,7 +51,7 @@ describe('API', () => {
 
     test('Server stats', async () => {
       const res = await request({
-        method: 'post',
+        method: 'get',
         path: '/core/stats',
         headers: { authorization }
       })

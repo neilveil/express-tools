@@ -1,0 +1,13 @@
+{
+  "name": "express-tools-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "express-tools": "file:../dst"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}

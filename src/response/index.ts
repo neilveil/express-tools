@@ -9,7 +9,7 @@ const ET_SID = process.env.ET_SID || ''
 
 const NODE_ENV = process.env.NODE_ENV
 
-const ET_PERSISTENT_ID = process.env.ET_PERSISTENT_ID === 'yes' && NODE_ENV !== 'sfe-test' ? true : false
+const ET_PERSISTENT_ID = process.env.ET_PERSISTENT_ID === 'yes' && NODE_ENV !== 'et-test' ? true : false
 
 let id = ET_PERSISTENT_ID ? cache.get('id') || 0 : 0
 let running = false
@@ -19,7 +19,7 @@ const RPS_DURATION = 1000 // milliseconds
 let requestsToCalcRPS: number[] = []
 
 const startRPSupdateLoop = () =>
-  NODE_ENV !== 'sfe-test' &&
+  NODE_ENV !== 'et-test' &&
   setInterval(() => {
     const rpsDurationTS = new Date().getTime() - RPS_DURATION
     requestsToCalcRPS = requestsToCalcRPS.filter(ts => ts > rpsDurationTS)
@@ -38,10 +38,10 @@ type requestLog = [id: number, method: string, path: string, ip: string]
 
 type responseLog =
   | [id: number, httpCode: number, code: string | number, message: string, rs: number, pt: number] // json | error
-  | [id: number, httpCode: number, redirect: string] // redirect
-  | [id: number, httpCode: number, template: string, rs: number] // template
+  | [id: number, httpCode: number, redirect: string, pt: number] // redirect
+  | [id: number, httpCode: number, template: string, rs: number, pt: number] // template
 
-const print = (type: 'REQ' | 'JSN' | 'TPL' | 'ERR' | 'RDR', content: requestLog | responseLog) => {
+const print = (type: 'REQ' | 'JSN' | 'ERR' | 'TPL' | 'RDR', content: requestLog | responseLog) => {
   const prefix: any = [type, new Date().toISOString()]
 
   if (ET_SID) prefix.push(ET_SID)
@@ -78,15 +78,15 @@ const init = (req: express.Request, res: express.Response, next: express.NextFun
     running = true
   }
 
-  if (NODE_ENV !== 'sfe-test') requestsToCalcRPS.push(new Date().getTime())
+  if (NODE_ENV !== 'et-test') requestsToCalcRPS.push(new Date().getTime())
 
   totalRequestsServed++
   id++
   if (ET_PERSISTENT_ID) cache.set('id', id)
 
-  req.IP = Array.isArray(req.headers['x-forwarded-for'])
-    ? req.headers['x-forwarded-for'][0]
-    : req.headers['x-forwarded-for'] || req.socket.remoteAddress || ''
+  const xForwardedFor = req.headers['x-forwarded-for']
+
+  req.IP = Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor || req.socket.remoteAddress || ''
 
   if (req.IP === '::1') req.IP = '127.0.0.1'
 
@@ -137,7 +137,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
 
   const responseSize = size(params.payload)
 
-  const processionTime = new Date().getTime() - params.req.ts?.getTime()
+  const processingTime = new Date().getTime() - params.req.ts?.getTime()
 
   avgProcessionTime = (avgProcessionTime * (totalRequestsServed - 1) + responseSize) / totalRequestsServed
   avgResponseSize = (avgResponseSize * (totalRequestsServed - 1) + responseSize) / totalRequestsServed
@@ -170,7 +170,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
 
       params.res.status(httpCode).json(response).end()
 
-      log = [id, httpCode, code, message || '-', responseSize, processionTime]
+      log = [id, httpCode, code, message || '-', responseSize, processingTime]
       print('JSN', log)
 
       break
@@ -194,7 +194,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
 
       params.res.status(httpCode).json(response).end()
 
-      log = [id, httpCode, code, message || '-', responseSize, processionTime]
+      log = [id, httpCode, code, message || '-', responseSize, processingTime]
       print('ERR', log)
 
       if (ET_DEBUG && params.error?.stack) console.log(chalk.redBright(params.error?.stack))
@@ -208,7 +208,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
 
       params.res.status(302).redirect(path)
 
-      log = [id, httpCode, path]
+      log = [id, httpCode, path, processingTime]
       print('RDR', log)
 
       break
@@ -221,7 +221,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
       params.res.set('content-type', 'text/html')
       params.res.status(httpCode).render(params.path, params.payload)
 
-      log = [id, httpCode, params.path, responseSize]
+      log = [id, httpCode, params.path, responseSize, processingTime]
       print('TPL', log)
 
       break

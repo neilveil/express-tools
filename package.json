@@ -6,8 +6,8 @@
     "build": "rimraf dst && tsc && cp public/* dst",
     "pretty": "prettier --config .prettierrc --write \"./**/*.js\"",
     "lint": "eslint . --ext .ts",
-    "jest": "NODE_ENV=sfe-test jest",
-    "jest:watch": "NODE_ENV=sfe-test jest --watchAll --runInBand",
+    "jest": "NODE_ENV=et-test jest",
+    "jest:watch": "NODE_ENV=et-test jest --watchAll --runInBand",
     "test": "npm run lint && npm run jest",
     "precommit": "npm run pretty && npm run test",
     "prepare": "husky install"

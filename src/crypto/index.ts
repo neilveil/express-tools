@@ -7,7 +7,7 @@ const NODE_ENV = process.env.NODE_ENV
 const _resize = (data: string, size: number, fill = 'X') =>
   data.substr(0, size) + fill.repeat(size - data.substr(0, size).length)
 
-const isEnabled = (ET_ENC_KEY && ET_ENC_IV) || NODE_ENV === 'sfe-test' ? true : false
+const isEnabled = (ET_ENC_KEY && ET_ENC_IV) || NODE_ENV === 'et-test' ? true : false
 
 const KEY = _resize(ET_ENC_KEY, 32)
 const IV = _resize(ET_ENC_IV, 16)

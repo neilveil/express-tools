@@ -98,7 +98,7 @@ Key at which you want to host core APIs. If `ET_CORE_KEY = core` then your statu
 
 `ET_PERSISTENT_ID` (yes | no) Default: no
 
-Each response returned from the server has an unique integral ID. But it's stored in the memory, so when the server restarts it again starts from 1. So to persist it's value, it need to be stored on the server which creates a `.sfe` at root of the project.
+Each response returned from the server has an unique integral ID. But it's stored in the memory, so when the server restarts it again starts from 1. So to persist it's value, it need to be stored on the server which creates a `.et` at root of the project.
 
 ---
 
@@ -124,7 +124,7 @@ To add a custom delay in all request served from the server in milliseconds. Ver
 ## Commong gitignore file
 
 ```
-*.sfe
+*.et
 
 *.env
 !.dummy.env
@@ -224,11 +224,15 @@ console.log(_md5('Hello!'))
 
 **Error Response**
 
-`JSN | Timestamp | ?{Server ID} :: ID | HTTP code | Code | Message | Response size | Response processing time`
+`ERR | Timestamp | ?{Server ID} :: ID | HTTP code | Code | Message | Response size | Response processing time`
+
+**Template Response**
+
+`TPL | Timestamp | ?{Server ID} :: ID | HTTP code | Template path | Response size | Response processing time`
 
 **Redirect Response**
 
-`RDR | Timestamp | ?{Server ID} :: ID | HTTP code | Redirect URL`
+`RDR | Timestamp | ?{Server ID} :: ID | HTTP code | Redirect URL | Response processing time`
 
 ## Response helper
 
@@ -241,6 +245,7 @@ _r.json({
   httpCode: 200, // Optional, default: 200
   code: 'CREATED', // Optional, default: 'OK'
   message: 'User successfully created', // Optional, default: ''
+  payload: {} // Optional, default: {}
 })
 ```
 
@@ -257,6 +262,18 @@ _r.json({
 })
 ```
 
+**Template response**
+
+```js
+_r.json({
+  req, // Required
+  res, // Required
+  httpCode: 200, // Optional, default: 200
+  path: 'pages/home', // Required, template path
+  payload: {} // Optional, default: {}
+})
+```
+
 **Redirect response**
 
 ```js
@@ -264,6 +281,6 @@ _r.json({
   req, // Required
   res, // Required
   httpCode: 302, // Optional, default: 302
-  redirect: 'https://example.com', // Required, redirect URL
+  redirect: 'https://example.com' // Required, redirect URL
 })
 ```

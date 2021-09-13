@@ -20,8 +20,8 @@ const auth = async (req: express.Request, res: express.Response, next: express.N
 
     if (!authorization) throw new Error()
 
-    // password => md5('sfe-test')
-    if (NODE_ENV === 'sfe-test' && authorization === '3a2e220599e52604367646b8a5a7dedf') return next()
+    // password => md5('et-test')
+    if (NODE_ENV === 'et-test' && authorization === '3a2e220599e52604367646b8a5a7dedf') return next()
 
     if (ET_AUTH_TOKEN && authTokenHash === authorization) return next()
 
@@ -57,7 +57,7 @@ router.post('/stop', EMPTY_REQUEST, auth, (req: express.Request, res: express.Re
   _r.json({ req, res })
 })
 
-router.post('/stats', EMPTY_REQUEST, auth, (req: express.Request, res: express.Response) =>
+router.get('/stats', EMPTY_REQUEST, auth, (req: express.Request, res: express.Response) =>
   _r.json({
     req,
     res,

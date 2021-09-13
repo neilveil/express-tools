@@ -19,7 +19,7 @@ export default (port = 8080): express.Application => {
       )
       .map(ip => 'http://' + (ip === '127.0.0.1' ? 'localhost' : ip))
       .map(ip => {
-        if (NODE_ENV !== 'sfe-test') console.log(`Server running on ${chalk.underline(ip + ':' + port)}`)
+        if (NODE_ENV !== 'et-test') console.log(`Server running on ${chalk.underline(ip + ':' + port)}`)
       })
   )
 

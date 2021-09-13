@@ -7,12 +7,12 @@ import response from '../response'
 
 const NODE_ENV = process.env.NODE_ENV
 const ET_DELAY = parseInt(process.env.ET_DELAY || '0')
-const ET_CORE_KEY = process.env.ET_CORE_KEY || (NODE_ENV === 'sfe-test' ? 'core' : '')
+const ET_CORE_KEY = process.env.ET_CORE_KEY || (NODE_ENV === 'et-test' ? 'core' : '')
 
 export default (): express.Application => {
   const app: express.Application = express()
 
-  if (NODE_ENV !== 'sfe-test') {
+  if (NODE_ENV !== 'et-test') {
     console.log('\n-x-x-x-x-x-\n')
     console.log(new Date().toISOString().substr(0, 19).replace('T', ' '))
     console.log('\n-x-x-x-x-x-\n')
@@ -47,7 +47,7 @@ export default (): express.Application => {
 
   app.use(haltCheck)
 
-  if (NODE_ENV === 'sfe-test') {
+  if (NODE_ENV === 'et-test') {
     app.use('/express-tools-success', (req, res) => response.json({ req, res }))
     app.use('/express-tools-error', (req, res) => response.error({ req, res }))
     app.use('/express-tools-redirect', (req, res) => response.redirect({ req, res }))

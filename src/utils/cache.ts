@@ -2,7 +2,7 @@ import fs from 'fs'
 
 const ET_SID = process.env.ET_SID || ''
 
-const filepath = (ET_SID ? `.${ET_SID}` : '') + '.sfe'
+const filepath = (ET_SID ? `.${ET_SID}` : '') + '.et'
 
 const defaultData = {
   id: 0
