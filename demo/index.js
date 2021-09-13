@@ -1,4 +1,4 @@
-const { server, _r, _validate, $joi, _md5, _encrypt, _decrypt } = require('express-tools')
+const { server, _r, _md5, _encrypt, _decrypt } = require('express-tools')
 
 const port = process.env.PORT
 
@@ -6,19 +6,7 @@ const app = server(port)
 
 app.set('views', '.')
 
-app.get(
-  // Route
-  '/api/test',
-
-  // Validator
-  (req, res, next) =>
-    _validate(req, res, next, {
-      name: $joi.string().min(3).required()
-    }),
-
-  // Controller
-  (req, res) => _r.json({ req, res, message: 'Hey there!' })
-)
+app.use('/api', require('./api'))
 
 app.get('/success', (req, res) => _r.json({ req, res, payload: { a: 1 } }))
 app.get('/redirect', (req, res) => _r.redirect({ req, res, path: '/success' }))

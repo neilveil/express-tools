@@ -6,8 +6,8 @@ export { server }
 export default server
 
 // Modules
-export { default as $axios } from 'axios'
 export { default as $express } from 'express'
+export { default as $axios } from 'axios'
 export { default as $joi } from 'joi'
 
 // Helpers
