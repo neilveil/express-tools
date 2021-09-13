@@ -37,11 +37,11 @@ const getTotalRequestsServed = (): number => totalRequestsServed
 type requestLog = [id: number, method: string, path: string, ip: string]
 
 type responseLog =
-  | [id: number, httpCode: number, code: string | number, message: string, rs: number, pt: number] // json | error
+  | [id: number, httpCode: number, code: string | number, message: string, rs: number, pt: number] // success | error
   | [id: number, httpCode: number, redirect: string, pt: number] // redirect
   | [id: number, httpCode: number, template: string, rs: number, pt: number] // template
 
-const print = (type: 'REQ' | 'JSN' | 'ERR' | 'TPL' | 'RDR', content: requestLog | responseLog) => {
+const print = (type: 'REQ' | 'SCS' | 'ERR' | 'TPL' | 'RDR', content: requestLog | responseLog) => {
   const prefix: any = [type, new Date().toISOString()]
 
   if (ET_SID) prefix.push(ET_SID)
@@ -56,7 +56,7 @@ const print = (type: 'REQ' | 'JSN' | 'ERR' | 'TPL' | 'RDR', content: requestLog 
       case 'REQ':
         console.log(chalk.blueBright(log))
         break
-      case 'JSN':
+      case 'SCS':
         console.log(chalk.greenBright(log))
         break
       case 'TPL':
@@ -120,14 +120,14 @@ interface response {
   payload: any
 }
 
-const json = (params: params): void => responseHandler(params, 'json')
+const success = (params: params): void => responseHandler(params, 'success')
 const template = (params: params): void => responseHandler(params, 'template')
 const error = (params: params): void => responseHandler(params, 'error')
 const redirect = (params: params): void => responseHandler(params, 'redirect')
 
 const setIfUndefined = (value: any, alt: any) => (value === undefined ? alt : value)
 
-const responseHandler = (params: params, responseType: 'json' | 'error' | 'redirect' | 'template') => {
+const responseHandler = (params: params, responseType: 'success' | 'error' | 'redirect' | 'template') => {
   if (params.req.dead) return
   params.req.dead = true
 
@@ -154,7 +154,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
   if (ET_SID) response.sid = ET_SID
 
   switch (responseType) {
-    case 'json':
+    case 'success':
       httpCode = setIfUndefined(params.httpCode, 200)
 
       code = setIfUndefined(params.code, 'OK')
@@ -171,7 +171,7 @@ const responseHandler = (params: params, responseType: 'json' | 'error' | 'redir
       params.res.status(httpCode).json(response).end()
 
       log = [id, httpCode, code, message || '-', responseSize, processingTime]
-      print('JSN', log)
+      print('SCS', log)
 
       break
 
@@ -262,7 +262,7 @@ const size = (obj: any) => {
 
 export default {
   init,
-  json,
+  success,
   template,
   error,
   redirect,
@@ -278,7 +278,7 @@ export default {
 
 // Response format
 // "Key | Timestamp | Request id | ?SID :: HTTP code | Code | Messasge | Response size | Processing time"
-// "JSN | 2021-07-22T11:05:39.987Z | a7ae7f560e71 | 1 :: 200 | OK | Successfully created | 224 | 118"
+// "SCS | 2021-07-22T11:05:39.987Z | a7ae7f560e71 | 1 :: 200 | OK | Successfully created | 224 | 118"
 // "ERR | 2021-07-22T11:05:39.987Z | a7ae7f560e71 | 1 :: 500 | ERROR | User not found! | 224 | 118"
 // "Key | Timestamp | Request id | ?SID :: HTTP code | Redirect URL | Processing time"
 // "RDR | 2021-07-22T11:05:39.987Z | a7ae7f560e71 | 1 :: 302 | https://redirect.com" | 118

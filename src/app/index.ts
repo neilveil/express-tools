@@ -48,7 +48,7 @@ export default (): express.Application => {
   app.use(haltCheck)
 
   if (NODE_ENV === 'et-test') {
-    app.use('/express-tools-success', (req, res) => response.json({ req, res }))
+    app.use('/express-tools-success', (req, res) => response.success({ req, res }))
     app.use('/express-tools-error', (req, res) => response.error({ req, res }))
     app.use('/express-tools-redirect', (req, res) => response.redirect({ req, res }))
   }

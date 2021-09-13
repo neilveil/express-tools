@@ -16,5 +16,5 @@ router.get(
     }),
 
   // Controller
-  (req, res) => _r.json({ req, res, message: 'Hey there!' })
+  (req, res) => _r.success({ req, res, message: 'Hey there!' })
 )

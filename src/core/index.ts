@@ -44,21 +44,21 @@ const auth = async (req: express.Request, res: express.Response, next: express.N
 }
 
 router.post('/auth', EMPTY_REQUEST, auth, (req: express.Request, res: express.Response) =>
-  _r.json({ req, res, code: 'AUTHORIZED' })
+  _r.success({ req, res, code: 'AUTHORIZED' })
 )
 
 router.post('/start', EMPTY_REQUEST, auth, (req: express.Request, res: express.Response) => {
   HALT_OPERATIONS = false
-  _r.json({ req, res })
+  _r.success({ req, res })
 })
 
 router.post('/stop', EMPTY_REQUEST, auth, (req: express.Request, res: express.Response) => {
   HALT_OPERATIONS = true
-  _r.json({ req, res })
+  _r.success({ req, res })
 })
 
 router.get('/stats', EMPTY_REQUEST, auth, (req: express.Request, res: express.Response) =>
-  _r.json({
+  _r.success({
     req,
     res,
     payload: {
@@ -73,10 +73,12 @@ router.get('/stats', EMPTY_REQUEST, auth, (req: express.Request, res: express.Re
 export const haltCheck = (req: express.Request, res: express.Response, next: express.NextFunction): any =>
   HALT_OPERATIONS ? res.status(599).send('Network connect timeout error') : next()
 
-router.use('/status', EMPTY_REQUEST, haltCheck, (req: express.Request, res: express.Response) => _r.json({ req, res }))
+router.use('/status', EMPTY_REQUEST, haltCheck, (req: express.Request, res: express.Response) =>
+  _r.success({ req, res })
+)
 
 router.use('/mirror', haltCheck, (req: express.Request, res: express.Response) =>
-  _r.json({
+  _r.success({
     req,
     res,
     payload: {

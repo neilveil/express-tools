@@ -19,9 +19,10 @@ Scalable & secure API server with statistics, status control, response handler, 
 
 ### Response handler
 
-- JSON
+- Success
 - Error
 - Redirect
+- Template
 
 ### Logs
 
@@ -197,7 +198,7 @@ app.use(
       name: $joi.string().min(3).required(),
     }),
   (req, res) => {
-    _r.json({ req, res, message: 'Hey there!' })
+    _r.success({ req, res, message: 'Hey there!' })
   }
 )
 
@@ -218,9 +219,9 @@ console.log(_md5('Hello!'))
 
 `REQ | Timestamp | ?{Server ID} :: ID | Method | Path | IP`
 
-**JSON Response**
+**Success Response**
 
-`JSN | Timestamp | ?{Server ID} :: ID | HTTP code | Code | Message | Response size | Response processing time`
+`SCS | Timestamp | ?{Server ID} :: ID | HTTP code | Code | Message | Response size | Response processing time`
 
 **Error Response**
 
@@ -236,10 +237,10 @@ console.log(_md5('Hello!'))
 
 ## Response helper
 
-**JSON response**
+**Success response**
 
 ```js
-_r.json({
+_r.success({
   req, // Required
   res, // Required
   httpCode: 200, // Optional, default: 200
@@ -252,7 +253,7 @@ _r.json({
 **Error response**
 
 ```js
-_r.json({
+_r.error({
   req, // Required
   res, // Required
   httpCode: 500, // Optional, default: 500
@@ -262,25 +263,25 @@ _r.json({
 })
 ```
 
+**Redirect response**
+
+```js
+_r.redirect({
+  req, // Required
+  res, // Required
+  httpCode: 302, // Optional, default: 302
+  redirect: 'https://example.com' // Required, redirect URL
+})
+```
+
 **Template response**
 
 ```js
-_r.json({
+_r.template({
   req, // Required
   res, // Required
   httpCode: 200, // Optional, default: 200
   path: 'pages/home', // Required, template path
   payload: {} // Optional, default: {}
-})
-```
-
-**Redirect response**
-
-```js
-_r.json({
-  req, // Required
-  res, // Required
-  httpCode: 302, // Optional, default: 302
-  redirect: 'https://example.com' // Required, redirect URL
 })
 ```
