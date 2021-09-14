@@ -231,6 +231,10 @@ console.log(_md5('Hello!'))
 
 `TPL | Timestamp | ?{Server ID} :: ID | HTTP code | Template path | Response size | Response processing time`
 
+**File Response**
+
+`FIL | Timestamp | ?{Server ID} :: ID | HTTP code | File path | Response processing time`
+
 **Redirect Response**
 
 `RDR | Timestamp | ?{Server ID} :: ID | HTTP code | Redirect URL | Response processing time`
@@ -263,14 +267,14 @@ _r.error({
 })
 ```
 
-**Redirect response**
+**File response**
 
 ```js
-_r.redirect({
+_r.file({
   req, // Required
   res, // Required
-  httpCode: 302, // Optional, default: 302
-  redirect: 'https://example.com' // Required, redirect URL
+  httpCode: 200, // Optional, default: 200
+  path: 'download/file.txt', // Required, file path w.r.t project root
 })
 ```
 
@@ -281,7 +285,18 @@ _r.template({
   req, // Required
   res, // Required
   httpCode: 200, // Optional, default: 200
-  path: 'pages/home', // Required, template path
+  path: 'pages/home', // Required, template path w.r.t template directory, "app.set('views', 'templates')"
   payload: {} // Optional, default: {}
+})
+```
+
+**Redirect response**
+
+```js
+_r.redirect({
+  req, // Required
+  res, // Required
+  httpCode: 302, // Optional, default: 302
+  redirect: 'https://example.com' // Required, redirect URL
 })
 ```

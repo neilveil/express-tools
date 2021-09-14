@@ -1,4 +1,6 @@
 import chalk from 'chalk'
+import fs from 'fs'
+import path from 'path'
 import express from 'express'
 
 import cache from '../utils/cache'
@@ -38,10 +40,10 @@ type requestLog = [id: number, method: string, path: string, ip: string]
 
 type responseLog =
   | [id: number, httpCode: number, code: string | number, message: string, rs: number, pt: number] // success | error
-  | [id: number, httpCode: number, redirect: string, pt: number] // redirect
+  | [id: number, httpCode: number, redirect: string, pt: number] // file, redirect
   | [id: number, httpCode: number, template: string, rs: number, pt: number] // template
 
-const print = (type: 'REQ' | 'SCS' | 'ERR' | 'TPL' | 'RDR', content: requestLog | responseLog) => {
+const print = (type: 'REQ' | 'SCS' | 'ERR' | 'FIL' | 'TPL' | 'RDR', content: requestLog | responseLog) => {
   const prefix: any = [type, new Date().toISOString()]
 
   if (ET_SID) prefix.push(ET_SID)
@@ -53,18 +55,27 @@ const print = (type: 'REQ' | 'SCS' | 'ERR' | 'TPL' | 'RDR', content: requestLog 
 
   if (ET_LOGS) {
     switch (type) {
+      // Blue
       case 'REQ':
         console.log(chalk.blueBright(log))
         break
+      // Green
       case 'SCS':
         console.log(chalk.greenBright(log))
         break
+      // Green
       case 'TPL':
         console.log(chalk.greenBright(log))
         break
+      // Green
+      case 'FIL':
+        console.log(chalk.greenBright(log))
+        break
+      // Red
       case 'ERR':
         console.log(chalk.redBright(log))
         break
+      // Cyan
       case 'RDR':
         console.log(chalk.cyanBright(log))
         break
@@ -121,13 +132,14 @@ interface response {
 }
 
 const success = (params: params): void => responseHandler(params, 'success')
-const template = (params: params): void => responseHandler(params, 'template')
 const error = (params: params): void => responseHandler(params, 'error')
+const file = (params: params): void => responseHandler(params, 'file')
+const template = (params: params): void => responseHandler(params, 'template')
 const redirect = (params: params): void => responseHandler(params, 'redirect')
 
 const setIfUndefined = (value: any, alt: any) => (value === undefined ? alt : value)
 
-const responseHandler = (params: params, responseType: 'success' | 'error' | 'redirect' | 'template') => {
+const responseHandler = (params: params, responseType: 'success' | 'error' | 'redirect' | 'file' | 'template') => {
   if (params.req.dead) return
   params.req.dead = true
 
@@ -147,9 +159,10 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
   let response: Partial<response> = {},
     httpCode: number,
     message = '',
-    path: string,
+    _path: string,
     code: string | number,
-    log: responseLog
+    log: responseLog,
+    filePath: string
 
   if (ET_SID) response.sid = ET_SID
 
@@ -201,15 +214,19 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
       break
 
-    case 'redirect':
-      httpCode = params.httpCode || 302
+    case 'file':
+      httpCode = params.httpCode || 200
 
-      path = setIfUndefined(params.path, '/')
+      if (!params.path) throw new Error(`Path in file type response can not be empty`)
 
-      params.res.status(302).redirect(path)
+      filePath = path.resolve(params.path)
 
-      log = [id, httpCode, path, processingTime]
-      print('RDR', log)
+      if (!fs.existsSync(params.path)) throw new Error(`File not found: ${filePath}`)
+
+      params.res.status(httpCode).sendFile(filePath)
+
+      log = [id, httpCode, params.path, processingTime]
+      print('FIL', log)
 
       break
 
@@ -223,6 +240,18 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
       log = [id, httpCode, params.path, responseSize, processingTime]
       print('TPL', log)
+
+      break
+
+    case 'redirect':
+      httpCode = params.httpCode || 302
+
+      _path = setIfUndefined(params.path, '/')
+
+      params.res.status(302).redirect(_path)
+
+      log = [id, httpCode, _path, processingTime]
+      print('RDR', log)
 
       break
   }
@@ -263,6 +292,7 @@ const size = (obj: any) => {
 export default {
   init,
   success,
+  file,
   template,
   error,
   redirect,
