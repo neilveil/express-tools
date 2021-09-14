@@ -154,8 +154,6 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
   avgProcessionTime = (avgProcessionTime * (totalRequestsServed - 1) + responseSize) / totalRequestsServed
   avgResponseSize = (avgResponseSize * (totalRequestsServed - 1) + responseSize) / totalRequestsServed
 
-  params.res.type('application/json')
-
   let response: Partial<response> = {},
     httpCode: number,
     message = '',
@@ -235,7 +233,6 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
       if (!params.path) throw new Error(`Path in template type response can not be empty`)
 
-      params.res.set('content-type', 'text/html')
       params.res.status(httpCode).render(params.path, params.payload)
 
       log = [id, httpCode, params.path, responseSize, processingTime]

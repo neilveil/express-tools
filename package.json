@@ -2,7 +2,7 @@
   "name": "express-tools",
   "description": "Scalable & secure API server with statistics, status control, response handler, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.",
   "author": "neilveil",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "index.js",
   "private": true,
   "scripts": {
@@ -14,7 +14,7 @@
     "test": "npm run lint && npm run jest",
     "precommit": "npm run pretty && npm run test",
     "prepare": "husky install",
-    "publish": "npm run build && npm publish dst"
+    "publish": "npm run build && cd dst && npm publish"
   },
   "dependencies": {
     "axios": "^0.21.1",
