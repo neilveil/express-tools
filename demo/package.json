@@ -5,7 +5,7 @@
     "start": "nodemon index.js"
   },
   "dependencies": {
-    "express-tools": "file:../dst"
+    "express-tools": "file:../build"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

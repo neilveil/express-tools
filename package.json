@@ -1,12 +1,6 @@
 {
-  "name": "express-tools",
-  "description": "Scalable & secure API server with statistics, status control, response handler, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.",
-  "author": "neilveil",
-  "version": "1.1.1",
-  "main": "index.js",
-  "private": true,
   "scripts": {
-    "build": "rimraf dst && tsc && node scripts/genPublicPackageJSON.js && mv package.public.json dst/package.json",
+    "build": "rimraf build && tsc && cp package.public.json build/package.json",
     "pretty": "prettier --config .prettierrc --write \"./**/*.js\"",
     "lint": "eslint . --ext .ts",
     "jest": "NODE_ENV=et-test jest",
@@ -14,7 +8,7 @@
     "test": "npm run lint && npm run jest",
     "precommit": "npm run pretty && npm run test",
     "prepare": "husky install",
-    "publish": "npm run build && cd dst && npm publish"
+    "publish": "npm run build && cd build && npm publish"
   },
   "dependencies": {
     "axios": "^0.21.1",
