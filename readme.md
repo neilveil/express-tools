@@ -58,6 +58,7 @@ Scalable & secure API server with statistics, status control, response handler, 
 - Hashing (_md5)
 - Response (_r)
 - Validation (_validate, EMPTY_REQUEST)
+- Express tools auth (_eta)
 
 ## Environment variables
 
@@ -141,31 +142,37 @@ ET_CORE_KEY = core
 
 ---
 
-`/core/status`
+GET :: `/core/status`
 
 To get Application status
 
 ---
 
-`/core/mirror`
+GET :: `/core/mirror`
 
 To test request received by server
 
 ---
 
-`/core/stop`*
+POST :: `/core/auth`*
+
+To test if authenticatin token is valid or not.
+
+---
+
+POST :: `/core/stop`*
 
 To temporarily stop server. To start the server again, start API need to be called. Server starts again if server is restarted.
 
 ---
 
-`/core/start`*
+POST :: `/core/start`*
 
 To start server
 
 ---
 
-`/core/stats`*
+POST :: `/core/stats`*
 
 To get server statistics
 
@@ -184,22 +191,37 @@ const {
   _md5,
   _encrypt,
   _decrypt,
+  _eta
 } = require('express-tools')
 
 const port = process.env.PORT
 
 const app = server(port)
 
-app.use(
-  '/api/test',
+
+app.get(
+  // Route
+  '/test',
+
+  // API validation with Joi example
   (req, res, next) =>
-    // API validation with Joi example
     _validate(req, res, next, {
-      name: $joi.string().min(3).required(),
+      name: $joi.string().min(3).required()
     }),
-  (req, res) => {
-    _r.success({ req, res, message: 'Hey there!' })
-  }
+
+  // Controller
+  (req, res) => _r.success({ req, res, message: 'Hey there!' })
+)
+
+app.get(
+  // Secure route
+  '/eta',
+
+  // Express tools auth
+  _eta,
+
+  // Controller
+  (req, res) => _r.success({ req, res, message: 'Hey there!' })
 )
 
 app.use('*', (req, res) =>
