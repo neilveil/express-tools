@@ -1,4 +1,4 @@
-const { server, _r, _md5, _encrypt, _decrypt } = require('express-tools')
+const { server, _r, _md5, _encrypt, _decrypt, _validate, $joi } = require('express-tools')
 
 const port = process.env.PORT
 
@@ -13,6 +13,25 @@ app.get('/redirect', (req, res) => _r.redirect({ req, res, path: '/success' }))
 app.get('/error', (req, res) => _r.error({ req, res }))
 app.get('/template', (req, res) => _r.template({ req, res, path: 'demo' }))
 app.get('/file', (req, res) => _r.file({ req, res, path: 'demo.ejs' }))
+
+app.get(
+  '/joi',
+  (req, res, next) => _validate.joi(req, res, next, { name: $joi.string().min(3).required() }),
+  (req, res) => _r.success({ req, res })
+)
+app.get(
+  '/ajv',
+  (req, res, next) =>
+    _validate.ajv(req, res, next, {
+      type: 'object',
+      additionalProperties: false,
+      required: ['name'],
+      properties: {
+        name: { type: 'string', minLength: 3 }
+      }
+    }),
+  (req, res) => _r.success({ req, res })
+)
 
 app.use('*', (req, res) => _r.error({ req, res, httpCode: 404, message: 'Page not found' }))
 

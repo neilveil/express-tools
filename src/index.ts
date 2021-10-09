@@ -9,6 +9,7 @@ export default server
 export { default as $express } from 'express'
 export { default as $axios } from 'axios'
 export { default as $joi } from 'joi'
+export { default as $ajv } from 'ajv'
 
 // Helpers
 export { decrypt as _decrypt, encrypt as _encrypt } from './crypto'

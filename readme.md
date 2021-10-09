@@ -50,7 +50,7 @@ Scalable & secure API server with statistics, status control, response handler, 
 
 - Request ($axios)
 - Express ($express)
-- Joi ($joi)
+- Validation ($ajv, $joi)
 
 ## Helpers
 
@@ -205,7 +205,7 @@ app.get(
 
   // API validation with Joi example
   (req, res, next) =>
-    _validate(req, res, next, {
+    _validate.joi(req, res, next, {
       name: $joi.string().min(3).required()
     }),
 

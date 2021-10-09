@@ -1,36 +1,73 @@
 import joi from 'joi'
+import ajv from 'ajv'
 import express from 'express'
 
 import _r from '../response'
 import chalk from 'chalk'
 
-const main = (req: express.Request, res: express.Response, next: express.NextFunction, object: any = {}): void => {
-  try {
-    if (
-      (req.method === 'GET' && Object.keys(req.body).length) ||
-      (req.method === 'POST' && Object.keys(req.query).length)
-    )
-      return _r.error({ req, res, message: 'Use either query string or body' })
+const ajvi = new ajv()
 
-    const schema: any = {}
+const main = {
+  joi: (req: express.Request, res: express.Response, next: express.NextFunction, object: any = {}): void => {
+    try {
+      if (
+        (req.method === 'GET' && Object.keys(req.body).length) ||
+        (req.method === 'POST' && Object.keys(req.query).length)
+      )
+        return _r.error({ req, res, message: 'Use either query string or body' })
 
-    for (const key in object) schema[key] = object[key]
+      const schema: any = {}
 
-    const { error, value } = joi.object(schema).validate(req.method === 'GET' ? req.query : req.body, {
-      allowUnknown: false
-    })
+      for (const key in object) schema[key] = object[key]
 
-    if (error) return _r.error({ req, res, httpCode: 400, code: 'VALIDATION_ERROR', error })
+      const { error, value } = joi.object(schema).validate(req.method === 'GET' ? req.query : req.body, {
+        allowUnknown: false
+      })
 
-    req.bind.args = value
+      if (error) return _r.error({ req, res, httpCode: 400, code: 'VALIDATION_ERROR', error })
 
-    next()
-  } catch (error) {
-    console.error(chalk.redBright(error))
+      req.bind.args = value
+
+      next()
+    } catch (error) {
+      console.error(chalk.redBright(error))
+    }
+  },
+  ajv: (req: express.Request, res: express.Response, next: express.NextFunction, schema: any = {}): void => {
+    try {
+      if (
+        (req.method === 'GET' && Object.keys(req.body).length) ||
+        (req.method === 'POST' && Object.keys(req.query).length)
+      )
+        return _r.error({ req, res, message: 'Use either query string or body' })
+
+      const validator = ajvi.compile(schema)
+
+      const value = req.method === 'GET' ? req.query : req.body
+
+      validator(value)
+
+      const errors = validator.errors
+
+      if (errors)
+        return _r.error({
+          req,
+          res,
+          httpCode: 400,
+          code: 'VALIDATION_ERROR',
+          error: new Error(`${errors[0].schemaPath} ${errors[0].message}`)
+        })
+
+      req.bind.args = value
+
+      next()
+    } catch (error) {
+      console.error(chalk.redBright(error))
+    }
   }
 }
 
 export const EMPTY_REQUEST = (req: express.Request, res: express.Response, next: express.NextFunction): void =>
-  main(req, res, next, {})
+  main.joi(req, res, next, {})
 
 export default main
