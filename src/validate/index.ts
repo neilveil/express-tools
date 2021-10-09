@@ -20,7 +20,7 @@ const main = (req: express.Request, res: express.Response, next: express.NextFun
       allowUnknown: false
     })
 
-    if (error) return _r.error({ req, res, code: 'VALIDATION_ERROR', error })
+    if (error) return _r.error({ req, res, httpCode: 400, code: 'VALIDATION_ERROR', error })
 
     req.bind.args = value
 
