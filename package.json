@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "rimraf build && tsc && cp package.public.json build/package.json",
-    "pretty": "prettier --config .prettierrc --write \"./**/*.js\"",
+    "pretty": "prettier --config .prettierrc --write \"./**/*.ts\"",
     "lint": "eslint . --ext .ts",
     "jest": "NODE_ENV=et-test jest",
     "jest:watch": "NODE_ENV=et-test jest --watchAll --runInBand",
