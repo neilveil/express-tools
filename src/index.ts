@@ -8,10 +8,12 @@ export default server
 // Modules
 export { default as $express } from 'express'
 export { default as $axios } from 'axios'
+export { default as $chalk } from 'chalk'
 export { default as $joi } from 'joi'
 export { default as $ajv } from 'ajv'
 
 // Helpers
+export { default as _app } from './app'
 export { decrypt as _decrypt, encrypt as _encrypt } from './crypto'
 export { default as _md5 } from './md5'
 export { default as _r } from './response'
