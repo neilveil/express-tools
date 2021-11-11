@@ -24,7 +24,6 @@ export default (): express.Application => {
 
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-  app.use(express.json())
 
   app.set('view engine', 'ejs')
 
