@@ -145,7 +145,7 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
   const id = params.req.id
 
-  const payload = params.payload || {}
+  const payload = params.payload === undefined ? {} : params.payload
 
   const responseSize = size(params.payload)
 
