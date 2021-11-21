@@ -140,6 +140,8 @@ const redirect = (params: params): void => responseHandler(params, 'redirect')
 const setIfUndefined = (value: any, alt: any) => (value === undefined ? alt : value)
 
 const responseHandler = (params: params, responseType: 'success' | 'error' | 'redirect' | 'file' | 'template') => {
+  if (ET_DEBUG && params.error?.stack) console.log(chalk.redBright(params.error?.stack))
+
   if (params.req.dead) return
   params.req.dead = true
 
@@ -207,8 +209,6 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
       log = [id, httpCode, code, message || '-', responseSize, processingTime]
       print('ERR', log)
-
-      if (ET_DEBUG && params.error?.stack) console.log(chalk.redBright(params.error?.stack))
 
       break
 
