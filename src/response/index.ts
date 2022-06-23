@@ -97,7 +97,9 @@ const init = (req: express.Request, res: express.Response, next: express.NextFun
 
   const xForwardedFor = req.headers['x-forwarded-for']
 
-  req.IP = Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor || req.socket.remoteAddress || ''
+  req.IP = Array.isArray(xForwardedFor)
+    ? xForwardedFor[0]
+    : (xForwardedFor || '').split(', ')[0] || req.socket.remoteAddress || ''
 
   if (req.IP === '::1') req.IP = '127.0.0.1'
 
