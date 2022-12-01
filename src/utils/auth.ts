@@ -18,10 +18,8 @@ const main = async (req: express.Request, res: express.Response, next: express.N
 
     // password => md5('et-test')
     if (NODE_ENV === 'et-test' && authorization === '3a2e220599e52604367646b8a5a7dedf') return next()
-
-    if (ET_AUTH_TOKEN && authTokenHash === authorization) return next()
-
-    if (ET_AUTH_URL) {
+    else if (ET_AUTH_TOKEN && authTokenHash === authorization) return next()
+    else if (ET_AUTH_URL) {
       const authAPI = await axios({
         method: 'post',
         url: ET_AUTH_URL,

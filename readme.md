@@ -1,6 +1,14 @@
 # Express Tools
 
-Scalable & secure API server with statistics, status control, response handler, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.
+Scalable & secure API server with statistics, status control, response handler module, logging, validations, integrated modules & multi-environment setup, fully compatible with nodeJS/nodeJS-alpine docker image.
+
+## Docs
+
+- [Environment](./docs/env.md)
+- [Configuration](./docs/config.md)
+- [Response](./docs/response.md)
+- [Logs](./docs/logs.md)
+- [Core API](./docs/api.md)
 
 ## Features
 
@@ -60,127 +68,7 @@ Scalable & secure API server with statistics, status control, response handler, 
 - Validation (_validate, EMPTY_REQUEST)
 - Express tools auth (_eta)
 
-## Environment variables
-
-`ENVF`
-
-Defines which environment file you want to use. Default is `.env`.
-
----
-
-`ET_LOGS` (yes | no) Default: no
-
-Print request and response logs.
-
----
-
-`ET_DEBUG` (yes | no) Default: no
-
-Print full error stack on error response.
-
----
-
-`ET_AUTH_TOKEN`
-
-Token to access core APIs. Assume if your token is `ET_AUTH_TOKEN = test`, then you need to pass `098f6bcd4621d373cade4e832627b4f6` as `Authorization` header key. `md5('test') = '098f6bcd4621d373cade4e832627b4f6'`
-
----
-
-`ET_AUTH_URL`
-
-To authenticate server from other server. Authorization header is forwared to this url and it should return 200 for successful authentication.
-
----
-
-`ET_CORE_KEY`
-
-Key at which you want to host core APIs. If `ET_CORE_KEY = core` then your status API url will be `{host}/core/status`
-
----
-
-`ET_PERSISTENT_ID` (yes | no) Default: no
-
-Each response returned from the server has an unique integral ID. But it's stored in the memory, so when the server restarts it again starts from 1. So to persist it's value, it need to be stored on the server which creates a `.et` at root of the project.
-
----
-
-`ET_SID`
-
-All response ID will always be unique if `ET_PERSISTENT_ID` is `yes`, but if you are running multiple containers of your application then the request ID will again clash as all the servers will start the ID from 0. So to bind each response with an unique ID, a server ID need to attached with each response. And now using this information, server from which the response was served and the response can be uniquely tracked.
-
-For e.g. while running multiple containers of your application with docker, container ID can be used as server ID which you find as `HOSTNAME` environment variable in your application. So to set server server ID you just need to do `process.env.ET_SID = process.env.HOSTNAME` at the top of your main enrty file of your application.
-
----
-
-`ET_ENC_KEY`
-`ET_ENC_IV`
-
-Set these to use `_encrypt` & `_decrypt` helpers.
-
----
-
-`ET_DELAY`
-
-To add a custom delay in all request served from the server in milliseconds. Very helpful in development mode to test the impact of slow API response on the application.
-
-## Commong gitignore file
-
-```
-*.et
-
-*.env
-!.dummy.env
-
-node_modules
-```
-
-## Core API
-
-```
-ET_CORE_KEY = core
-```
-
----
-
-GET :: `/core/status`
-
-To get Application status
-
----
-
-GET :: `/core/mirror`
-
-To test request received by server
-
----
-
-POST :: `/core/auth`*
-
-To test if authenticatin token is valid or not.
-
----
-
-POST :: `/core/stop`*
-
-To temporarily stop server. To start the server again, start API need to be called. Server starts again if server is restarted.
-
----
-
-POST :: `/core/start`*
-
-To start server
-
----
-
-POST :: `/core/stats`*
-
-To get server statistics
-
----
-
-> *Authentication required
-
-## Example server
+## Usage
 
 ```js
 const {
@@ -235,90 +123,68 @@ console.log(_decrypt(_encrypt('Hello!')))
 console.log(_md5('Hello!'))
 ```
 
-## Logs format
+## Usage
 
-**Request**
+Add `.env` file
 
-`REQ | Timestamp | ?{Server ID} :: ID | Method | Path | IP`
-
-**Success Response**
-
-`SCS | Timestamp | ?{Server ID} :: ID | HTTP code | Code | Message | Response size | Response processing time`
-
-**Error Response**
-
-`ERR | Timestamp | ?{Server ID} :: ID | HTTP code | Code | Message | Response size | Response processing time`
-
-**Template Response**
-
-`TPL | Timestamp | ?{Server ID} :: ID | HTTP code | Template path | Response size | Response processing time`
-
-**File Response**
-
-`FIL | Timestamp | ?{Server ID} :: ID | HTTP code | File path | Response processing time`
-
-**Redirect Response**
-
-`RDR | Timestamp | ?{Server ID} :: ID | HTTP code | Redirect URL | Response processing time`
-
-## Response helper
-
-**Success response**
-
-```js
-_r.success({
-  req, // Required
-  res, // Required
-  httpCode: 200, // Optional, default: 200
-  code: 'CREATED', // Optional, default: 'OK'
-  message: 'User successfully created', // Optional, default: ''
-  payload: {} // Optional, default: {}
-})
+```
+PORT = 8080
 ```
 
-**Error response**
+Setup routes
 
 ```js
-_r.error({
-  req, // Required
-  res, // Required
-  httpCode: 500, // Optional, default: 500
-  code: 'DB_ERROR', // Optional, default: 'ERROR'
-  message: 'DB error', // Optional, default: ''
-  error, // Optional, error object
-})
+const { server, _r } = require('express-tools')
+
+const port = process.env.PORT
+
+const app = server(port)
+
+app.get(
+  // Route
+  '/test',
+  // Controller
+  (req, res) => {
+    // API logic here..
+    _r.success({ req, res, message: 'This is a test route!' })
+  }
+)
+
+app.use('*', (req, res) =>
+  _r.error({ req, res, httpCode: 404, message: 'Page not found' })
+)
 ```
 
-**File response**
+Validate request with [Joi](https://joi.dev/)
 
 ```js
-_r.file({
-  req, // Required
-  res, // Required
-  httpCode: 200, // Optional, default: 200
-  path: 'download/file.txt', // Required, file path w.r.t project root
-})
+app.get(
+  // Route
+  '/joi',
+  // Validator
+  (req, res, next) => _validate.joi(req, res, next, { name: $joi.string().min(3).required() }),
+  // Controller
+  (req, res) => _r.success({ req, res })
+)
 ```
 
-**Template response**
+Validate request with [Ajv](https://ajv.js.org/)
 
 ```js
-_r.template({
-  req, // Required
-  res, // Required
-  httpCode: 200, // Optional, default: 200
-  path: 'pages/home', // Required, template path w.r.t template directory, "app.set('views', 'templates')"
-  payload: {} // Optional, default: {}
-})
-```
-
-**Redirect response**
-
-```js
-_r.redirect({
-  req, // Required
-  res, // Required
-  httpCode: 302, // Optional, default: 302
-  redirect: 'https://example.com' // Required, redirect URL
-})
+app.get(
+  // Route
+  '/ajv',
+  // Validator
+  (req, res, next) =>
+    _validate.ajv(req, res, next, {
+      type: 'object',
+      additionalProperties: false,
+      required: ['name'],
+      properties: {
+        name: { type: 'string', minLength: 3 }
+      }
+    }),
+  // Controller
+  (req, res) => _r.success({ req, res })
+)
 ```
