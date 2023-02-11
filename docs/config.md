@@ -49,6 +49,8 @@ For e.g. while running multiple containers of your application with docker, cont
 
 Set these to use `_encrypt` & `_decrypt` helpers.
 
+> Ideal length for key & iv is 32 & 16 respectively.
+
 ---
 
 `ET_DELAY`
