@@ -21,7 +21,8 @@ const main = {
       for (const key in object) schema[key] = object[key]
 
       const { error, value } = joi.object(schema).validate(req.method === 'GET' ? req.query : req.body, {
-        allowUnknown: false
+        allowUnknown: false,
+        presence: 'required'
       })
 
       if (error) return _r.error({ req, res, httpCode: 400, code: 'VALIDATION_ERROR', error })
