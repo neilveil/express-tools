@@ -1,0 +1,5 @@
+.tdb.json
+# build
+# coverage
+node_modules
+tmp
