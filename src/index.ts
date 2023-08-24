@@ -8,9 +8,6 @@ import $express from 'express'
 const $router = $express.Router()
 export { $express, $router }
 
-// Types
-export { Request, Response, NextFunction } from 'express'
-
 // Helpers
 export { decrypt as _decrypt, encrypt as _encrypt, md5 as _md5 } from './crypto'
 export { default as _app } from './app'
