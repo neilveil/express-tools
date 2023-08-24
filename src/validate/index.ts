@@ -1,6 +1,6 @@
 import joi from 'joi'
 import ajv from 'ajv'
-import express from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 import _r from '../response'
 import chalk from 'chalk'
@@ -8,7 +8,7 @@ import chalk from 'chalk'
 const ajvi = new ajv()
 
 const main = {
-  joi: (req: express.Request, res: express.Response, next: express.NextFunction, object: any = {}): void => {
+  joi: (req: Request, res: Response, next: NextFunction, object: any = {}): void => {
     try {
       if (
         (req.method === 'GET' && Object.keys(req.body).length) ||
@@ -35,7 +35,7 @@ const main = {
       console.error(chalk.redBright(error))
     }
   },
-  ajv: (req: express.Request, res: express.Response, next: express.NextFunction, schema: any = {}): void => {
+  ajv: (req: Request, res: Response, next: NextFunction, schema: any = {}): void => {
     try {
       if (
         (req.method === 'GET' && Object.keys(req.body).length) ||
@@ -70,7 +70,6 @@ const main = {
   }
 }
 
-export const EMPTY_REQUEST = (req: express.Request, res: express.Response, next: express.NextFunction): void =>
-  main.joi(req, res, next, {})
+export const EMPTY_REQUEST = (req: Request, res: Response, next: NextFunction): void => main.joi(req, res, next, {})
 
 export default main

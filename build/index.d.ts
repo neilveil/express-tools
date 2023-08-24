@@ -5,6 +5,7 @@ export { default as $joi } from 'joi';
 import $express from 'express';
 declare const $router: import("express-serve-static-core").Router;
 export { $express, $router };
+export { Request, Response, NextFunction } from 'express';
 export { decrypt as _decrypt, encrypt as _encrypt, md5 as _md5 } from './crypto';
 export { default as _app } from './app';
 export { default as _env } from './env';
