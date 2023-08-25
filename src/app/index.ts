@@ -18,8 +18,6 @@ export default (): Application => {
     console.log('\n-x-x-x-x-x-\n')
   }
 
-  app.use(response.init)
-
   app.use(cors())
 
   app.use(compression())
@@ -45,6 +43,9 @@ export default (): Application => {
   })
 
   if (ET_DELAY) app.use((req, res, next) => setTimeout(next, ET_DELAY))
+
+  // Init response module
+  app.use(response.init)
 
   if (process.env.NODE_ENV === 'test') {
     app.get('/express-tools-success', (req, res) => response.success({ req, res }))

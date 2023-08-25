@@ -18,7 +18,6 @@ exports.default = () => {
         console.log(new Date().toISOString().substring(0, 19).replace('T', ' '));
         console.log('\n-x-x-x-x-x-\n');
     }
-    app.use(response_1.default.init);
     app.use((0, cors_1.default)());
     app.use((0, compression_1.default)());
     app.use(express_1.default.json());
@@ -41,6 +40,8 @@ exports.default = () => {
     });
     if (ET_DELAY)
         app.use((req, res, next) => setTimeout(next, ET_DELAY));
+    // Init response module
+    app.use(response_1.default.init);
     if (process.env.NODE_ENV === 'test') {
         app.get('/express-tools-success', (req, res) => response_1.default.success({ req, res }));
         app.get('/express-tools-error', (req, res) => response_1.default.error({ req, res }));
