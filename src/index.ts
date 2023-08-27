@@ -3,10 +3,7 @@ export { default as $ajv } from 'ajv'
 export { default as $axios } from 'axios'
 export { default as $chalk } from 'chalk'
 export { default as $joi } from 'joi'
-
-import $express from 'express'
-const $router = $express.Router()
-export { $express, $router }
+export { default as $express } from 'express'
 
 // Helpers
 export { decrypt as _decrypt, encrypt as _encrypt, md5 as _md5 } from './crypto'

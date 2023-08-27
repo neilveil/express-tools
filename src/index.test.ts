@@ -9,7 +9,6 @@ describe('Integrated modules exported', () => {
       '$chalk',
       '$joi',
       '$express',
-      '$router',
       '_decrypt',
       '_encrypt',
       '_md5',

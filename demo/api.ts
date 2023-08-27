@@ -1,8 +1,11 @@
 // Replace '../build/index' with 'express-tools'
-import { $joi, _validate, _r, $router } from '../build/index'
+import { $joi, _validate, _r, $express } from '../build/index'
+
+const router = $express.Router()
+export default router
 
 // GET: http://localhost:8080/api/test?name=NeilVeil
-$router.get(
+router.get(
   '/test',
   (req, res, next) =>
     _validate.joi(req, res, next, {
@@ -15,5 +18,3 @@ $router.get(
     _r.success({ req, res, code: 'OK', message: 'Hey ' + args.name + '!' })
   }
 )
-
-export default $router

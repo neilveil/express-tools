@@ -270,7 +270,7 @@ _r.template({ req, res, path: 'page/home', payload: { data: 'abc' } })
 ## Exported modules
 
 - Request (`$axios`)
-- Express (`$express`, `$router`)
+- Express (`$express`)
 - Validation (`$ajv`, `$joi`)
 - Chalk (`$chalk`)
 

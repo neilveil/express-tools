@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.server = exports.EMPTY_REQUEST = exports._validate = exports._tdb = exports._r = exports._env = exports._app = exports._md5 = exports._encrypt = exports._decrypt = exports.$router = exports.$express = exports.$joi = exports.$chalk = exports.$axios = exports.$ajv = void 0;
+exports.server = exports.EMPTY_REQUEST = exports._validate = exports._tdb = exports._r = exports._env = exports._app = exports._md5 = exports._encrypt = exports._decrypt = exports.$express = exports.$joi = exports.$chalk = exports.$axios = exports.$ajv = void 0;
 // Modules
 var ajv_1 = require("ajv");
 Object.defineProperty(exports, "$ajv", { enumerable: true, get: function () { return __importDefault(ajv_1).default; } });
@@ -13,10 +13,8 @@ var chalk_1 = require("chalk");
 Object.defineProperty(exports, "$chalk", { enumerable: true, get: function () { return __importDefault(chalk_1).default; } });
 var joi_1 = require("joi");
 Object.defineProperty(exports, "$joi", { enumerable: true, get: function () { return __importDefault(joi_1).default; } });
-const express_1 = __importDefault(require("express"));
-exports.$express = express_1.default;
-const $router = express_1.default.Router();
-exports.$router = $router;
+var express_1 = require("express");
+Object.defineProperty(exports, "$express", { enumerable: true, get: function () { return __importDefault(express_1).default; } });
 // Helpers
 var crypto_1 = require("./crypto");
 Object.defineProperty(exports, "_decrypt", { enumerable: true, get: function () { return crypto_1.decrypt; } });
