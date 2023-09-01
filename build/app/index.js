@@ -61,7 +61,6 @@ exports.default = () => {
             redirect: false,
             index: false
         };
-        console.log(path_1.default.resolve(ET_STATIC_DIR));
         if (ET_STATIC_ROOT)
             app.use(ET_STATIC_ROOT, express_1.default.static(path_1.default.resolve(ET_STATIC_DIR), staticOptions));
         else

@@ -1,7 +1,7 @@
 {
   "name": "express-tools",
   "description": "The Server Wizard",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "author": "neilveil",
   "repository": "neilveil/express-tools",
   "license": "MIT",
