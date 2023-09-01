@@ -1,6 +1,0 @@
-{
-  "name": "express-tools-demo",
-  "scripts": {
-    "start": "nodemon --ignore . index.ts"
-  }
-}

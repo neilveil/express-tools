@@ -23,20 +23,11 @@ server()
 
 ## Docs
 
-### [Environment](./docs/env.md)
-
-No need to rely on some package to read environment variables from `.env` file.
-
-```js
-const { _env } = require('express-tools')
-console.log(_env('MY_VAR'))
-```
-
 ### Build API
 
 ```js
 const { server, _r } = require('express-tools')
-const app = server(8080)
+const app = server(8080) // or `ET_PORT` env variable can also used to set the port.
 
 app.get('/status', (req, res) => {
   _r.success({ req, res })
@@ -49,6 +40,15 @@ app.get('/api/my-api', (req, res) => {
 app.use('*', (req, res) => {
   _r.error({ req, res, httpCode: 404, code: 'NOT_FOUND', message: 'Page not found!' })
 })
+```
+
+### [Environment](./docs/env.md)
+
+No need to rely on some package to read environment variables from `.env` file.
+
+```js
+const { _env } = require('express-tools')
+console.log(_env('MY_VAR'))
 ```
 
 ### [Response module](./docs/r.md)

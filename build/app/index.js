@@ -10,6 +10,7 @@ const env_1 = __importDefault(require("../env"));
 const validate_1 = __importDefault(require("../validate"));
 const joi_1 = __importDefault(require("joi"));
 const response_1 = __importDefault(require("../response"));
+const path_1 = __importDefault(require("path"));
 const ET_DELAY = parseInt((0, env_1.default)('ET_DELAY', '0'));
 const ET_VIEWS_DIR = (0, env_1.default)('ET_VIEWS_DIR');
 const ET_STATIC_DIR = (0, env_1.default)('ET_STATIC_DIR');
@@ -49,7 +50,7 @@ exports.default = () => {
     // Views middleware
     if (ET_VIEWS_DIR) {
         app.set('view engine', 'ejs');
-        app.set('views', ET_VIEWS_DIR);
+        app.set('views', path_1.default.resolve(ET_VIEWS_DIR));
     }
     // Static middleware
     if (ET_STATIC_DIR) {
@@ -60,10 +61,11 @@ exports.default = () => {
             redirect: false,
             index: false
         };
+        console.log(path_1.default.resolve(ET_STATIC_DIR));
         if (ET_STATIC_ROOT)
-            app.use(ET_STATIC_ROOT, express_1.default.static(ET_STATIC_DIR, staticOptions));
+            app.use(ET_STATIC_ROOT, express_1.default.static(path_1.default.resolve(ET_STATIC_DIR), staticOptions));
         else
-            app.use(express_1.default.static(ET_STATIC_DIR, staticOptions));
+            app.use(express_1.default.static(path_1.default.resolve(ET_STATIC_DIR), staticOptions));
     }
     if (process.env.NODE_ENV === 'test') {
         app.get('/express-tools-success', (req, res) => response_1.default.success({ req, res }));

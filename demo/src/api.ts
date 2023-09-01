@@ -1,5 +1,5 @@
 // Replace '../build/index' with 'express-tools'
-import { $joi, _validate, _r, $express } from '../build/index'
+import { $joi, _validate, _r, $express } from '../../build/index'
 
 const router = $express.Router()
 export default router

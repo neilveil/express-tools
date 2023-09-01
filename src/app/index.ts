@@ -6,6 +6,7 @@ import _validate from '../validate'
 import $joi from 'joi'
 
 import response from '../response'
+import path from 'path'
 
 const ET_DELAY = parseInt(_env('ET_DELAY', '0'))
 const ET_VIEWS_DIR = _env('ET_VIEWS_DIR')
@@ -52,7 +53,7 @@ export default (): Application => {
   // Views middleware
   if (ET_VIEWS_DIR) {
     app.set('view engine', 'ejs')
-    app.set('views', ET_VIEWS_DIR)
+    app.set('views', path.resolve(ET_VIEWS_DIR))
   }
 
   // Static middleware
@@ -65,8 +66,8 @@ export default (): Application => {
       index: false
     }
 
-    if (ET_STATIC_ROOT) app.use(ET_STATIC_ROOT, express.static(ET_STATIC_DIR, staticOptions))
-    else app.use(express.static(ET_STATIC_DIR, staticOptions))
+    if (ET_STATIC_ROOT) app.use(ET_STATIC_ROOT, express.static(path.resolve(ET_STATIC_DIR), staticOptions))
+    else app.use(express.static(path.resolve(ET_STATIC_DIR), staticOptions))
   }
 
   if (process.env.NODE_ENV === 'test') {

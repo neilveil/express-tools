@@ -1,13 +1,14 @@
 {
   "name": "express-tools",
   "description": "The Server Wizard",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "author": "neilveil",
   "repository": "neilveil/express-tools",
   "license": "MIT",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
+    "start": "cd demo && nodemon --ignore . src/index.ts",
     "build": "rimraf build && tsc",
     "rollup": "rollup --config --bundleConfigAsCjs",
     "pretty": "prettier --write ./src/**/*.ts",

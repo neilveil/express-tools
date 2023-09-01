@@ -5,7 +5,7 @@ import _app from '../app'
 import { getServerHostList } from '../helpers'
 import _env from '../env'
 
-const _port = parseInt(_env('ET_PORT')) || 8080
+const _port = parseInt(_env('ET_PORT') || '8080')
 
 export default (port: number = _port, callback?: () => void): Application => {
   const app = _app()

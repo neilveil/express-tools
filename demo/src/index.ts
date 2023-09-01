@@ -1,8 +1,8 @@
 // Replace '../build/index' with 'express-tools'
-import { server, _r, _md5, _encrypt, _decrypt, _validate, $joi, _env, EMPTY_REQUEST } from '../build/index'
+import { server, _r, _md5, _encrypt, _decrypt, _validate, $joi, EMPTY_REQUEST } from '../../build/index'
 import api from './api'
 
-const app = server(_env('PORT'))
+const app = server()
 
 // GET: http://localhost:8080/success
 app.get('/success', (req, res) => _r.success({ req, res, payload: { a: 1 } }))
