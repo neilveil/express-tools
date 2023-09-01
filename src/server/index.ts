@@ -3,8 +3,11 @@ import { Application } from 'express'
 import chalk from 'chalk'
 import _app from '../app'
 import { getServerHostList } from '../helpers'
+import _env from '../env'
 
-export default (port = 8080, callback?: () => void): Application => {
+const _port = parseInt(_env('ET_PORT')) || 8080
+
+export default (port: number = _port, callback?: () => void): Application => {
   const app = _app()
 
   const server = app.listen(port, () => {

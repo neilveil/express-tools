@@ -25,7 +25,7 @@ server()
 
 ### [Environment](./docs/env.md)
 
-No need to rely on some package to read environment variables.
+No need to rely on some package to read environment variables from `.env` file.
 
 ```js
 const { _env } = require('express-tools')
@@ -38,6 +38,10 @@ console.log(_env('MY_VAR'))
 const { server, _r } = require('express-tools')
 const app = server(8080)
 
+app.get('/status', (req, res) => {
+  _r.success({ req, res })
+})
+
 app.get('/api/my-api', (req, res) => {
   _r.success({ req, res, payload: { data: 'Hello there!' } })
 })
@@ -47,7 +51,7 @@ app.use('*', (req, res) => {
 })
 ```
 
-### [Request/Response helper](./docs/r.md)
+### [Response module](./docs/r.md)
 
 Get rid of uneven responses from the server.
 
@@ -57,8 +61,8 @@ Get rid of uneven responses from the server.
 const { _r } = require('express-tools')
 
 // Success response
-app.get('/api', (req, res) => {
-  _r.success({ req, res, payload: { data: 'Hello there!' } })
+app.get('/example-api', (req, res) => {
+  _r.success({ req, res, payload: { data: 'Hello there!' }, message: '' })
 })
 ```
 
@@ -73,7 +77,7 @@ Response
 }
 ```
 
-To log request/response set `ET_LOGS` environment variable to `yes` in the `.env` file
+To log request/response, set `ET_LOGS` environment variable to `yes` in the `.env` file
 
 ```js
 ET_LOGS = yes
@@ -83,7 +87,7 @@ ET_LOGS = yes
 
 ```js
 // Error response
-app.get('/error', (req, res) => {
+app.get('/example-error', (req, res) => {
   try {
     const a = {}
     a.b.c()
@@ -94,38 +98,81 @@ app.get('/error', (req, res) => {
 })
 ```
 
-To log complete error details set the `ET_DEBUG` environment variable to `yes` in the `.env` file
+To log complete error details, set the `ET_DEBUG` environment variable to `yes` in the `.env` file
 
 ```js
 ET_DEBUG = yes
 ```
 
-**Template response**
+**Render views from `.ejs` templates**
+
+Set views directory path in the `.env` file
 
 ```js
-app.get('/template', (req, res) => {
-  _r.template({ req, res, path: 'page/home', payload: { data: 'abc' } })
+ET_VIEWS_DIR = ./views
+```
+
+```js
+app.get('/example-render', (req, res) => {
+  _r.render({ req, res, path: 'page/home', payload: { data: 'abc' } })
 })
 ```
 
-**Redirect response**
+Project structure
 
-```js
-app.get('/redirect', (req, res) => {
-  _r.redirect({ req, res, path: '/redirect-to-path' })
-})
+```
+/views
+  /pages
+    /home.ejs
+.env
+index.js
 ```
 
 [EJS](https://ejs.co/) templating engine is used. Payload is passed to the template.
 
+**Static files**
+
+To serve static files from a directory, set static directory path variable in the `.env` file
+
+```js
+ET_STATIC_DIR = ./public
+```
+
+Project structure
+
+```
+/public
+  /example.txt
+.env
+index.js
+```
+
+Example file will be available at `{HOST}/example.txt`
+
+To append root path, set static root variable in the `.env` file
+
+```js
+ET_STATIC_ROOT = /static
+```
+
+Now the example file will be available at `{HOST}/static/example.txt`
+
+**Redirect response**
+
+```js
+app.get('/example-redirect', (req, res) => {
+  _r.redirect({ req, res, path: '/redirect-to-path' })
+})
+```
+
 **Dead request**
 
-Express Tools itself handles dead requests. The error you get when you try to send the response when it's already sent once. Even though the error is handled by Express Tools still it logs the error in the console with the request ID to detect the API causing the problem.
+Express Tools itself handles dead requests, the error you get when you try to send the response when it's already sent once. Even though the error is handled by Express Tools still it logs the error in the console with the request ID to detect the API causing the problem.
 
 ```js
 app.get('/dead', (req, res) => {
   _r.success({ req, res })
-  _r.success({ req, res })
+  _r.success({ req, res }) // <- This should log the error, as response is already sent!
 })
 ```
 
@@ -191,7 +238,7 @@ app.get('/empty', EMPTY_REQUEST, (req, res) => _r.success({ req, res }))
 Reading validated data in the controller
 
 ```js
-(req, res) => {
+;(req, res) => {
   const name = req.bind.name
   console.log(name)
 
@@ -222,7 +269,7 @@ _tdb.clear('abc')
 _tdb.clear()
 ```
 
-Saves all the data in `.tdb.json`. To use a custom file set the path in env variable `ET_TDB_FILE`.
+TDB saves all the data in `.tdb.json`. To use a custom file set the file name in env variable `ET_TDB_FILE`.
 
 ### Server insights
 
@@ -255,11 +302,13 @@ console.log(_md5('Hello!'))
 
 ### Templating
 
-Express Tools support [EJS](https://ejs.co/) templating out of the box with template type response.
+Express Tools support [EJS](https://ejs.co/) templating out of the box with render type response.
 
 ```js
-_r.template({ req, res, path: 'page/home', payload: { data: 'abc' } })
+_r.render({ req, res, path: 'page/home', payload: { data: 'abc' } })
 ```
+
+> Do not forget to set `ET_VIEWS_DIR` variable in the `.env` file, check response module usage above for more details.
 
 ## Misc
 
@@ -267,12 +316,39 @@ _r.template({ req, res, path: 'page/home', payload: { data: 'abc' } })
 
 - To Append request/response logs ID with a custom text, set the custom text in `ET_ID_PREFIX` env variable. Generally used in microservice architecture to detect the particular server from which the request is sent.
 
+- To manually initialize response module set `ET_AUTO_INIT_R = no`. It's used when requests are handled & returned by your middleware before response module. To initialize response module, `app.use(_r.init)`
+
 ## Exported modules
 
 - Request (`$axios`)
 - Express (`$express`)
 - Validation (`$ajv`, `$joi`)
 - Chalk (`$chalk`)
+
+## All Express Tools `.env` variables
+
+```py
+# Server port
+ET_PORT=8080
+
+# Log request/response
+ET_LOGS=yes
+# Log complete errors
+ET_DEBUG=yes
+
+# Static directory
+ET_VIEWS_DIR=./views
+
+# Static files directory
+ET_STATIC_DIR=./public
+# Static files root
+ET_STATIC_ROOT=/static
+
+# Mic
+ET_DELAY=
+ET_ID_PREFIX=
+ET_AUTO_INIT_R=
+```
 
 ## Demo project
 

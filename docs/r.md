@@ -1,4 +1,4 @@
-# Express Tools request/response handler
+# Express Tools response module
 
 ## Request
 
@@ -14,7 +14,7 @@ REQ | 2023-08-24T07:16:23.652Z | 1 :: GET | /user/auth | 48.55.42.21
 
 ## Response
 
-Format
+Formats
 
 ```bash
 Key | Timestamp | Request ID :: HTTP Code | Code | Messasge | Response Size | Processing Time
@@ -22,8 +22,17 @@ Key | Timestamp | Request ID :: HTTP Code | Code | Messasge | Response Size | Pr
 SCS | 2023-08-24T07:16:23.652Z | 1 :: 200 | OK | Successfully created | 24 | 64
 ERR | 2023-08-24T07:16:23.652Z | 1 :: 500 | ERROR | User not found! | 24 | 64
 RDR | 2023-08-24T07:16:23.652Z | 1 :: 302 | - | https://redirect.com" | - | 64
-TPL | 2023-08-24T07:16:23.652Z | 1 :: 200 | - | page/product/info | 24 | 64
+REN | 2021-07-22T11:05:39.987Z | 1 :: 200 | - | page/product/info | 224 | 118
+STC | 2021-07-22T11:05:39.987Z | 1 :: 200 | OK | - | 224 | 118
 ```
+
+| Key | Usage    |
+| :-: | -------- |
+| SCS | Success  |
+| ERR | Error    |
+| RDR | Redirect |
+| REN | Render   |
+| STC | Static   |
 
 **Success response**
 
@@ -51,26 +60,15 @@ _r.error({
 })
 ```
 
-**File response**
+**Render response**
 
 ```js
-_r.file({
-  req, // Required
-  res, // Required
-  httpCode: 200, // Optional, default: 200
-  path: 'download/file.txt' // Required, file path w.r.t project root
-})
-```
-
-**Template response**
-
-```js
-_r.template({
+_r.render({
   req, // Required
   res, // Required
   httpCode: 200, // Optional, default: 200
   path: 'pages/home', // Required, template path w.r.t template directory, "app.set('views', 'templates')"
-  payload: {} // Optional, default: {}, Set data to be in template
+  payload: {} // Optional, default: {}, Payload is passed to the template.
 })
 ```
 

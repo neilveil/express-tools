@@ -1,15 +1,8 @@
 // Replace '../build/index' with 'express-tools'
-import { server, _r, _md5, _encrypt, _decrypt, _validate, $joi, _env, $express, EMPTY_REQUEST } from '../build/index'
+import { server, _r, _md5, _encrypt, _decrypt, _validate, $joi, _env, EMPTY_REQUEST } from '../build/index'
 import api from './api'
 
 const app = server(_env('PORT'))
-
-// Only use if you want to use ejs templating (https://ejs.co/)
-app.set('views', '.')
-
-// Only use if you want to server static files from public folder |
-// Please not that response from public directory is not logged!
-app.use($express.static('public'))
 
 // GET: http://localhost:8080/success
 app.get('/success', (req, res) => _r.success({ req, res, payload: { a: 1 } }))
@@ -25,8 +18,8 @@ app.get('/error', (req, res) => {
   }
 })
 
-// GET: http://localhost:8080/template
-app.get('/template', (req, res) => _r.template({ req, res, path: 'demo', payload: { data: 'abc' } }))
+// GET: http://localhost:8080/render
+app.get('/render', (req, res) => _r.render({ req, res, path: 'demo', payload: { data: 'abc' } }))
 
 // GET: http://localhost:8080/redirect
 app.get('/redirect', (req, res) => _r.redirect({ req, res, path: '/success' }))

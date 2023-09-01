@@ -32,7 +32,8 @@ const getTotalRequestsServed = () => totalRequestsServed;
 // SCS | 2021-07-22T11:05:39.987Z | 1 :: 200 | OK | Successfully created | 224 | 118
 // ERR | 2021-07-22T11:05:39.987Z | 1 :: 500 | ERROR | User not found! | 224 | 118
 // RDR | 2021-07-22T11:05:39.987Z | 1 :: 302 | - | https://redirect.com" | - | 118
-// TPL | 2021-07-22T11:05:39.987Z | 1 :: 200 | - | page/product/info | 224 | 118
+// REN | 2021-07-22T11:05:39.987Z | 1 :: 200 | - | page/product/info | 224 | 118
+// STC | 2021-07-22T11:05:39.987Z | 1 :: 200 | OK | - | 224 | 118
 const print = (type, content) => {
     if (!ET_LOGS)
         return;
@@ -46,10 +47,11 @@ const print = (type, content) => {
             break;
         // Green
         case 'SCS':
+        case 'STC':
             console.log(chalk_1.default.greenBright(log));
             break;
         // Green
-        case 'TPL':
+        case 'REN':
             console.log(chalk_1.default.greenBright(log));
             break;
         // Red
@@ -62,9 +64,12 @@ const print = (type, content) => {
             break;
     }
 };
+let initialized = false;
 let running = false;
 let id = 0;
 const init = (req, res, next) => {
+    if (!initialized)
+        initialized = true;
     if (!running) {
         startRPSupdateLoop();
         running = true;
@@ -87,10 +92,12 @@ const init = (req, res, next) => {
 };
 const success = (params) => responseHandler(params, 'success');
 const error = (params) => responseHandler(params, 'error');
-const template = (params) => responseHandler(params, 'template');
+const render = (params) => responseHandler(params, 'render');
 const redirect = (params) => responseHandler(params, 'redirect');
 const setIfUndefined = (value, alt) => (value === undefined ? alt : value);
 const responseHandler = (params, responseType) => {
+    if (!initialized)
+        return console.error(chalk_1.default.redBright('Response module not initialized!'));
     if (ET_DEBUG && params.error)
         console.error(params.error);
     const _req = params.req;
@@ -99,7 +106,7 @@ const responseHandler = (params, responseType) => {
     _req.dead = true;
     const id = _req.id;
     const payload = params.payload === undefined ? {} : params.payload;
-    const responseSize = size(params.payload);
+    const responseSize = params.size || size(params.payload);
     avgResponseSize = (avgResponseSize * (totalRequestsServed - 1) + responseSize) / totalRequestsServed;
     const processingTime = new Date().getTime() - _req.ts?.getTime();
     avgProcessionTime = (avgProcessionTime * (totalRequestsServed - 1) + processingTime) / totalRequestsServed;
@@ -119,7 +126,7 @@ const responseHandler = (params, responseType) => {
             if (!params.skip)
                 params.res.status(httpCode).json(response).end();
             log = [id, httpCode, code, message || '-', responseSize, processingTime];
-            print('SCS', log);
+            print(params.isStatic ? 'STC' : 'SCS', log);
             break;
         case 'error':
             httpCode = setIfUndefined(params.httpCode, 500);
@@ -139,14 +146,14 @@ const responseHandler = (params, responseType) => {
             log = [id, httpCode, code, message || '-', responseSize, processingTime];
             print('ERR', log);
             break;
-        case 'template':
+        case 'render':
             httpCode = params.httpCode || 200;
             if (!params.path)
-                throw new Error(`Path in template type response can not be empty`);
+                throw new Error(`Template path in render type response can not be empty!`);
             if (!params.skip)
                 params.res.status(httpCode).render(params.path, params.payload);
             log = [id, httpCode, '-', params.path, responseSize, processingTime];
-            print('TPL', log);
+            print('REN', log);
             break;
         case 'redirect':
             httpCode = params.httpCode || 302;
@@ -195,7 +202,7 @@ const size = (obj) => {
 exports.default = {
     init,
     success,
-    template,
+    render,
     error,
     redirect,
     getRPS,

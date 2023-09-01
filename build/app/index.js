@@ -11,6 +11,10 @@ const validate_1 = __importDefault(require("../validate"));
 const joi_1 = __importDefault(require("joi"));
 const response_1 = __importDefault(require("../response"));
 const ET_DELAY = parseInt((0, env_1.default)('ET_DELAY', '0'));
+const ET_VIEWS_DIR = (0, env_1.default)('ET_VIEWS_DIR');
+const ET_STATIC_DIR = (0, env_1.default)('ET_STATIC_DIR');
+const ET_STATIC_ROOT = (0, env_1.default)('ET_STATIC_ROOT');
+const ET_AUTO_INIT_R = (0, env_1.default)('ET_AUTO_INIT_R');
 exports.default = () => {
     const app = (0, express_1.default)();
     if (process.env.NODE_ENV !== 'test') {
@@ -22,7 +26,6 @@ exports.default = () => {
     app.use((0, compression_1.default)());
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: true }));
-    app.set('view engine', 'ejs');
     // Express tools middleware
     app.use((req, res, next) => {
         const _req = req;
@@ -41,7 +44,27 @@ exports.default = () => {
     if (ET_DELAY)
         app.use((req, res, next) => setTimeout(next, ET_DELAY));
     // Init response module
-    app.use(response_1.default.init);
+    if (ET_AUTO_INIT_R !== 'no')
+        app.use(response_1.default.init);
+    // Views middleware
+    if (ET_VIEWS_DIR) {
+        app.set('view engine', 'ejs');
+        app.set('views', ET_VIEWS_DIR);
+    }
+    // Static middleware
+    if (ET_STATIC_DIR) {
+        const staticOptions = {
+            setHeaders: (res, path, stat) => {
+                response_1.default.success({ req: res.req, res, skip: true, size: stat.size, isStatic: true });
+            },
+            redirect: false,
+            index: false
+        };
+        if (ET_STATIC_ROOT)
+            app.use(ET_STATIC_ROOT, express_1.default.static(ET_STATIC_DIR, staticOptions));
+        else
+            app.use(express_1.default.static(ET_STATIC_DIR, staticOptions));
+    }
     if (process.env.NODE_ENV === 'test') {
         app.get('/express-tools-success', (req, res) => response_1.default.success({ req, res }));
         app.get('/express-tools-error', (req, res) => response_1.default.error({ req, res }));

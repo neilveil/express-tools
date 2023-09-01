@@ -11,11 +11,13 @@ interface params {
     error?: any;
     payload?: any;
     skip?: boolean;
+    size?: number;
+    isStatic?: boolean;
 }
 declare const _default: {
     init: (req: Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>, next: NextFunction) => void;
     success: (params: params) => void;
-    template: (params: params) => void;
+    render: (params: params) => void;
     error: (params: params) => void;
     redirect: (params: params) => void;
     getRPS: () => number;

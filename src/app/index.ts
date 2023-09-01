@@ -8,6 +8,10 @@ import $joi from 'joi'
 import response from '../response'
 
 const ET_DELAY = parseInt(_env('ET_DELAY', '0'))
+const ET_VIEWS_DIR = _env('ET_VIEWS_DIR')
+const ET_STATIC_DIR = _env('ET_STATIC_DIR')
+const ET_STATIC_ROOT = _env('ET_STATIC_ROOT')
+const ET_AUTO_INIT_R = _env('ET_AUTO_INIT_R')
 
 export default (): Application => {
   const app: Application = express()
@@ -24,8 +28,6 @@ export default (): Application => {
 
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-
-  app.set('view engine', 'ejs')
 
   // Express tools middleware
   app.use((req, res, next) => {
@@ -45,7 +47,27 @@ export default (): Application => {
   if (ET_DELAY) app.use((req, res, next) => setTimeout(next, ET_DELAY))
 
   // Init response module
-  app.use(response.init)
+  if (ET_AUTO_INIT_R !== 'no') app.use(response.init)
+
+  // Views middleware
+  if (ET_VIEWS_DIR) {
+    app.set('view engine', 'ejs')
+    app.set('views', ET_VIEWS_DIR)
+  }
+
+  // Static middleware
+  if (ET_STATIC_DIR) {
+    const staticOptions = {
+      setHeaders: (res: any, path: any, stat: any) => {
+        response.success({ req: res.req, res, skip: true, size: stat.size, isStatic: true })
+      },
+      redirect: false,
+      index: false
+    }
+
+    if (ET_STATIC_ROOT) app.use(ET_STATIC_ROOT, express.static(ET_STATIC_DIR, staticOptions))
+    else app.use(express.static(ET_STATIC_DIR, staticOptions))
+  }
 
   if (process.env.NODE_ENV === 'test') {
     app.get('/express-tools-success', (req, res) => response.success({ req, res }))

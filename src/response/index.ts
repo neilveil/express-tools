@@ -47,9 +47,10 @@ type responseLog = [
 // SCS | 2021-07-22T11:05:39.987Z | 1 :: 200 | OK | Successfully created | 224 | 118
 // ERR | 2021-07-22T11:05:39.987Z | 1 :: 500 | ERROR | User not found! | 224 | 118
 // RDR | 2021-07-22T11:05:39.987Z | 1 :: 302 | - | https://redirect.com" | - | 118
-// TPL | 2021-07-22T11:05:39.987Z | 1 :: 200 | - | page/product/info | 224 | 118
+// REN | 2021-07-22T11:05:39.987Z | 1 :: 200 | - | page/product/info | 224 | 118
+// STC | 2021-07-22T11:05:39.987Z | 1 :: 200 | OK | - | 224 | 118
 
-const print = (type: 'REQ' | 'SCS' | 'ERR' | 'TPL' | 'RDR', content: requestLog | responseLog) => {
+const print = (type: 'REQ' | 'SCS' | 'ERR' | 'REN' | 'RDR' | 'STC', content: requestLog | responseLog) => {
   if (!ET_LOGS) return
 
   const prefix: any = [type, new Date().toISOString()]
@@ -65,10 +66,11 @@ const print = (type: 'REQ' | 'SCS' | 'ERR' | 'TPL' | 'RDR', content: requestLog 
       break
     // Green
     case 'SCS':
+    case 'STC':
       console.log(chalk.greenBright(log))
       break
     // Green
-    case 'TPL':
+    case 'REN':
       console.log(chalk.greenBright(log))
       break
     // Red
@@ -82,10 +84,13 @@ const print = (type: 'REQ' | 'SCS' | 'ERR' | 'TPL' | 'RDR', content: requestLog 
   }
 }
 
+let initialized = false
 let running = false
 let id = 0
 
 const init = (req: Request, res: Response, next: NextFunction): void => {
+  if (!initialized) initialized = true
+
   if (!running) {
     startRPSupdateLoop()
     running = true
@@ -127,6 +132,8 @@ interface params {
   error?: any
   payload?: any
   skip?: boolean
+  size?: number
+  isStatic?: boolean
 }
 
 interface response {
@@ -138,12 +145,14 @@ interface response {
 
 const success = (params: params): void => responseHandler(params, 'success')
 const error = (params: params): void => responseHandler(params, 'error')
-const template = (params: params): void => responseHandler(params, 'template')
+const render = (params: params): void => responseHandler(params, 'render')
 const redirect = (params: params): void => responseHandler(params, 'redirect')
 
 const setIfUndefined = (value: any, alt: any) => (value === undefined ? alt : value)
 
-const responseHandler = (params: params, responseType: 'success' | 'error' | 'redirect' | 'template' | 'custom') => {
+const responseHandler = (params: params, responseType: 'success' | 'error' | 'redirect' | 'render') => {
+  if (!initialized) return console.error(chalk.redBright('Response module not initialized!'))
+
   if (ET_DEBUG && params.error) console.error(params.error)
 
   const _req: any = params.req
@@ -155,7 +164,7 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
   const payload = params.payload === undefined ? {} : params.payload
 
-  const responseSize = size(params.payload)
+  const responseSize = params.size || size(params.payload)
   avgResponseSize = (avgResponseSize * (totalRequestsServed - 1) + responseSize) / totalRequestsServed
 
   const processingTime = new Date().getTime() - _req.ts?.getTime()
@@ -186,7 +195,7 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
       if (!params.skip) params.res.status(httpCode).json(response).end()
 
       log = [id, httpCode, code, message || '-', responseSize, processingTime]
-      print('SCS', log)
+      print(params.isStatic ? 'STC' : 'SCS', log)
 
       break
 
@@ -212,15 +221,15 @@ const responseHandler = (params: params, responseType: 'success' | 'error' | 're
 
       break
 
-    case 'template':
+    case 'render':
       httpCode = params.httpCode || 200
 
-      if (!params.path) throw new Error(`Path in template type response can not be empty`)
+      if (!params.path) throw new Error(`Template path in render type response can not be empty!`)
 
       if (!params.skip) params.res.status(httpCode).render(params.path, params.payload)
 
       log = [id, httpCode, '-', params.path, responseSize, processingTime]
-      print('TPL', log)
+      print('REN', log)
 
       break
 
@@ -274,7 +283,7 @@ export default {
   init,
 
   success,
-  template,
+  render,
   error,
   redirect,
 
