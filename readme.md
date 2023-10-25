@@ -1,8 +1,10 @@
-# Express Tools - The Server Wizard
+# Express Tools - The Server Wizard 🚀
 
 [![Downloads](https://img.shields.io/npm/dm/express-tools.svg)](https://www.npmjs.com/package/express-tools) [![Version](https://img.shields.io/npm/v/express-tools.svg)](https://www.npmjs.com/package/express-tools)
 
-Elevate your Express applications to new heights with Express Tools, a comprehensive framework designed to supercharge your backend development experience.
+Elevate your Express applications effortlessly with Express Tools, The Ultimate Server Wizard for Effortless Backend Brilliance.
+
+**A comprehensive back-end framework designed to supercharge your Express apps.**
 
 While [Express](https://expressjs.com/) remains renowned for its simplicity and minimalism, harnessing its full potential often demands meticulous configuration, especially when preparing for production deployment.
 
@@ -344,7 +346,7 @@ ET_STATIC_DIR=./public
 # Static files root
 ET_STATIC_ROOT=/static
 
-# Mic
+# Misc
 ET_DELAY=
 ET_ID_PREFIX=
 ET_AUTO_INIT_R=
