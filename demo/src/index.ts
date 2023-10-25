@@ -1,5 +1,5 @@
-// Replace '../build/index' with 'express-tools'
-import { server, _r, _md5, _encrypt, _decrypt, _validate, $joi, EMPTY_REQUEST } from '../../build/index'
+// Replace '../dist/index' with 'express-tools'
+import { server, _r, _md5, _encrypt, _decrypt, _validate, $joi, EMPTY_REQUEST } from '../../dist/index'
 import api from './api'
 
 const app = server()

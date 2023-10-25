@@ -1,5 +1,5 @@
 .tdb.json
-# build
+dist
 # coverage
 node_modules
 tmp
