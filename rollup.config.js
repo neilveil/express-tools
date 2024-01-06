@@ -5,7 +5,8 @@ import fs from 'fs'
 
 fs.rmSync('dist', { recursive: true, force: true })
 
-// Remove all comments for rollup to work
+// Add rollup script in package.json for rollup to work
+// "rollup": "rollup --config --bundleConfigAsCjs",
 const config = defineConfig({
   input: 'src/index.ts',
   output: [
