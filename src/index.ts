@@ -13,6 +13,10 @@ export { default as _r } from './response'
 export { default as _tdb } from './tdb'
 export { default as _validate, EMPTY_REQUEST } from './validate'
 
+// Types
+export { Request, Response, NextFunction } from 'express'
+
+// Server
 import server from './server'
 export { server }
 
