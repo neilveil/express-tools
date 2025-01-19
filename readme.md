@@ -27,7 +27,7 @@ API server components:
 - Server: `const server = startServer(app, 8080)`
 - Controller: `_c(async (args, context) => {})`
 - Validator: Request handler `_v({})`
-- Context middleware: `etConfig.logs.contextParser = (req: Request) => { return {} }`
+- Context middleware: `etConfig.contextParser = (req: Request) => { return {} }`
 
 ### Create express app & start server
 
@@ -215,10 +215,10 @@ etConfig.logs.requestData = false // Enable request data logging, request query 
 etConfig.logs.response = true // Enable response logging
 etConfig.logs.error = true // Enable error logging
 
-etConfig.logs.idPrefix = '' // Request id prefix (useful in tracing request in microservice architecture)
-etConfig.logs.delay = 0 // Custom delay in milliseconds
-etConfig.logs.validator = 'zod' // Validator to use inside `_v`
-etConfig.logs.contextParser = (req: Request) => {} // Middleware to add context with the request
+etConfig.idPrefix = '' // Request id prefix (useful in tracing request in microservice architecture)
+etConfig.delay = 0 // Custom delay in milliseconds
+etConfig.validator = 'zod' // Validator to use inside `_v`
+etConfig.contextParser = (req: Request) => {} // Middleware to add context with the request
 ```
 
 ## Developer
