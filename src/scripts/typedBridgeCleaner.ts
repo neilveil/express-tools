@@ -3,17 +3,30 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 // Snippet to inject at the end
-const proxySnippet = (host = '') => `
-export default new Proxy(
+const proxySnippet = () => `
+type typedBridgeConfig = {
+  host: string
+  headers: { [key: string]: string }
+}
+
+export const typedBridgeConfig: typedBridgeConfig = {
+  host: '',
+  headers: { 'Content-Type': 'application/json' }
+}
+
+export const typedBridge = new Proxy(
   {},
   {
     get(_, methodName: string) {
       return async (args: any) => {
-        const response = await fetch('${host}' + ${host.endsWith('/') ? '' : "'/'"} + methodName, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(args)
-        })
+        const response = await fetch(
+          typedBridgeConfig.host + (typedBridgeConfig.host.endsWith('/') ? '' : '/') + methodName,
+          {
+            method: 'POST',
+            headers: typedBridgeConfig.headers,
+            body: JSON.stringify(args)
+          }
+        )
         if (response.status !== 200) throw new Error('typed-bridge server error!')
         return response.json()
       }
@@ -21,10 +34,7 @@ export default new Proxy(
   }
 ) as typeof _default
 
-// Usage example
-// import typedBridge from './typedBridge'
-// const user = await typedBridge['user.fetch']({ id: 1 })
-// console.log('user', user)
+export default typedBridge
 `
 
 /**
@@ -84,7 +94,7 @@ const removeDefaultExportTransformer: ts.TransformerFactory<ts.SourceFile> = con
  *  2. Transforms code with the above transformers.
  *  3. Writes the final file output.
  */
-export default function cleanTsFile(src: string, host: string) {
+export default function cleanTsFile(src: string) {
   let sourceCode = fs.readFileSync(src, 'utf-8')
 
   // Ensure the top comment is present if missing
@@ -100,7 +110,7 @@ export default function cleanTsFile(src: string, host: string) {
 
   // Print final code
   const printer = ts.createPrinter()
-  const transformedCode = printer.printFile(result.transformed[0]).concat(proxySnippet(host))
+  const transformedCode = printer.printFile(result.transformed[0]).concat(proxySnippet())
 
   // Write back to the same file
   fs.writeFileSync(src, transformedCode, 'utf-8')

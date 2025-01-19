@@ -179,15 +179,24 @@ Generate typed bridge file
 ```json
 {
   "scripts": {
-    "gen-typed-bridge": "express-tools gen-typed-bridge --src ./src/bridge/index.ts --dest ./typedBridge.ts --host 'http://localhost:8080'"
+    "gen-typed-bridge": "express-tools gen-typed-bridge --src ./src/bridge/index.ts --dest ./typedBridge.ts"
   }
 }
 ```
+
+**src**: Typed Bridge source file
+**dest**: Output declaration file path
 
 Import generated `typedBridge.ts` file in front-end & call server functions.
 
 ```ts
 import typedBridge from './typedBridge'
+
+// Need to be set once
+// Set typed bridge server host
+typedBridgeConfig.host = 'http://localhost:8080/bridge'
+// Set headers (optional)
+typedBridgeConfig.headers = { authorization: 'Basic mydemotoken==' }
 
 ..
 

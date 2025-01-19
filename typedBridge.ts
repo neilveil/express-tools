@@ -27,19 +27,34 @@ declare const _default: {
     }>>>;
 };
 
-export default new Proxy(
+type typedBridgeConfig = {
+  host: string
+  headers: { [key: string]: string }
+}
+
+export const typedBridgeConfig: typedBridgeConfig = {
+  host: '',
+  headers: { 'Content-Type': 'application/json' }
+}
+
+export const typedBridge = new Proxy(
   {},
   {
     get(_, methodName: string) {
       return async (args: any) => {
-        const response = await fetch('http://localhost:8080/bridge' + '/' + methodName, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(args)
-        })
+        const response = await fetch(
+          typedBridgeConfig.host + (typedBridgeConfig.host.endsWith('/') ? '' : '/') + methodName,
+          {
+            method: 'POST',
+            headers: typedBridgeConfig.headers,
+            body: JSON.stringify(args)
+          }
+        )
         if (response.status !== 200) throw new Error('typed-bridge server error!')
         return response.json()
       }
     }
   }
 ) as typeof _default
+
+export default typedBridge

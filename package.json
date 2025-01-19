@@ -1,7 +1,7 @@
 {
   "name": "express-tools",
   "description": "Strictly typed production ready no-configuration server",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "neilveil",
@@ -11,7 +11,7 @@
     "start": "ts-node src/index.ts",
     "dist": "rimraf dist && tsc",
     "test:server": "nodemon --watch src --ext ts --exec 'ts-node -r tsconfig-paths/register src/demo/index.ts'",
-    "test:cli": "ts-node -r tsconfig-paths/register src/scripts/cli.ts gen-typed-bridge --src ./src/demo/bridge/index.ts --host 'http://localhost:8080/bridge'",
+    "test:cli": "ts-node -r tsconfig-paths/register src/scripts/cli.ts gen-typed-bridge --src ./src/demo/bridge/index.ts --dest ./typedBridge.ts",
     "lint": "eslint"
   },
   "bin": {
