@@ -1,7 +1,7 @@
 {
   "name": "express-tools",
   "description": "Strictly typed production ready no-configuration server",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "neilveil",
@@ -24,6 +24,9 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "joi": "^17.13.3",
+    "rollup": "^4.29.1",
+    "rollup-plugin-dts": "^6.1.1",
+    "typescript": "^5.7.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -41,11 +44,8 @@
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "rimraf": "^5.0.10",
-    "rollup": "^4.29.1",
-    "rollup-plugin-dts": "^6.1.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.0"
   },
   "keywords": [
