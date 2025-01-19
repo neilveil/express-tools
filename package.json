@@ -47,5 +47,19 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.0"
-  }
+  },
+  "keywords": [
+    "api",
+    "backend",
+    "caching",
+    "development",
+    "encryption",
+    "express",
+    "expressjs",
+    "framework",
+    "helpers",
+    "logging",
+    "server",
+    "validation"
+  ]
 }
