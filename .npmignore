@@ -1,6 +1,5 @@
 .prettierignore
 .prettierrc.json
 eslint.config.mjs
-rollup.config.js
 src
 tsconfig.json
