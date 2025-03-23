@@ -40,7 +40,12 @@ export const loadENV = () => {
       .filter(x => !x.startsWith('#') && x.trim() && x.includes('='))
       .forEach(x => {
         const key = x.split('=')[0].trim()
-        const value = x.split('=').slice(1).join('=').trim()
+        const value = x
+          .split('=')
+          .slice(1)
+          .join('=')
+          .trim()
+          .replace(/^(['"])(.*)\1$/, '$2')
         process.env[key] = value
       })
   else if (process.env.ET_ENVF) {
