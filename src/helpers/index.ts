@@ -17,8 +17,9 @@ const getLocalIPList = () => {
   return ipList
 }
 
+const seperator = '\n-x-x-x-x-x-\n'
+
 export const printStartLogs = (port: number) => {
-  const seperator = '\n-x-x-x-x-x-\n'
   const ipList = getLocalIPList()
 
   console.log(seperator)
@@ -26,6 +27,14 @@ export const printStartLogs = (port: number) => {
   console.log(seperator)
   console.log(chalk.green(`Server started at: ` + new Date().toISOString() + '\n'))
   ipList.map(ip => console.log(`Server running on: ` + chalk.blueBright(`${`http://${ip}:${port}`}`)))
+  console.log(seperator)
+}
+
+export const printStopLogs = (gracefulShutdown = false) => {
+  console.log(seperator)
+  console.log(
+    chalk.green(`Server${gracefulShutdown ? ' gracefully ' : ' '}stopped at: ` + new Date().toISOString() + '\n')
+  )
   console.log(seperator)
 }
 

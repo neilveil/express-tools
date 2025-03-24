@@ -3,12 +3,12 @@ import { Request } from 'express'
 interface config {
   logs: {
     request: boolean
-    requestData: boolean
     response: boolean
     error: boolean
   }
   idPrefix: string
-  delay: number
+  responseDelay: number
+  gracefulShutdown: boolean
   validator: 'ajv' | 'joi' | 'zod'
   contextParser: (req: Request) => any
 }
@@ -16,11 +16,11 @@ interface config {
 export const config: config = {
   logs: {
     request: true,
-    requestData: false,
     response: true,
     error: true
   },
-  delay: 0,
+  responseDelay: 0,
+  gracefulShutdown: false,
   idPrefix: '',
   validator: 'zod',
   contextParser: () => {}

@@ -1,7 +1,24 @@
 import { Application } from 'express'
 import { Server } from 'http'
-import { printStartLogs } from '../helpers'
+import { etConfig } from '..'
+import { printStartLogs, printStopLogs } from '../helpers'
 
 export default (app: Application, port = 8080): Server => {
-  return app.listen(port, () => printStartLogs(port))
+  const server = app.listen(port, () => printStartLogs(port))
+
+  let shuttingDown = false
+  const shutdown = () => {
+    if (shuttingDown) return
+    shuttingDown = true
+
+    server.close()
+    printStopLogs(true)
+
+    if (!etConfig.gracefulShutdown) process.exit(0)
+  }
+
+  process.on('SIGINT', () => shutdown())
+  process.on('SIGTERM', () => shutdown())
+
+  return server
 }

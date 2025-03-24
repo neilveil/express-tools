@@ -1,7 +1,7 @@
+import chalk from 'chalk'
 import compression from 'compression'
 import cors from 'cors'
 import express, { Application } from 'express'
-import chalk from 'chalk'
 import { etConfig } from '..'
 
 export default (): Application => {
@@ -49,12 +49,6 @@ export default (): Application => {
       console.log(
         chalk.blueBright(`REQ | ${new Date().toISOString()} | ${_requestId} :: ${req.method} | ${req.path} | ${ip}`)
       )
-
-      // Log query
-      if (etConfig.logs.requestData && Object.keys(req.query).length) console.log(`Query:`, req.query)
-
-      // Log body
-      if (etConfig.logs.requestData && Object.keys(req.body).length) console.log(`Body:`, req.body)
     }
 
     // Log response
@@ -74,10 +68,10 @@ export default (): Application => {
     } else next()
   })
 
-  // Custom delay
-  if (etConfig.delay)
+  // Custom responseDelay
+  if (etConfig.responseDelay)
     app.use((req, res, next) => {
-      setTimeout(next, etConfig.delay)
+      setTimeout(next, etConfig.responseDelay)
     })
 
   // Server health

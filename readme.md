@@ -211,12 +211,12 @@ const user = await typedBridge['user.fetch']({ id: 1 })
 import { etConfig } from 'express-tools'
 
 etConfig.logs.request = true // Enable request logging
-etConfig.logs.requestData = false // Enable request data logging, request query & body
 etConfig.logs.response = true // Enable response logging
 etConfig.logs.error = true // Enable error logging
 
 etConfig.idPrefix = '' // Request id prefix (useful in tracing request in microservice architecture)
-etConfig.delay = 0 // Custom delay in milliseconds
+etConfig.responseDelay = 0 // Custom response delay in milliseconds
+etConfig.gracefulShutdown = false // Wait for processes to complete after shutdown
 etConfig.validator = 'zod' // Validator to use inside `_v`
 etConfig.contextParser = (req: Request) => {} // Middleware to add context with the request
 ```

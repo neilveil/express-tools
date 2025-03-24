@@ -3,7 +3,6 @@ import api from './api'
 import bridge from './bridge'
 
 etConfig.logs.request = true
-etConfig.logs.requestData = true
 etConfig.contextParser = (req: Request) => {
   return req.originalUrl
 }
