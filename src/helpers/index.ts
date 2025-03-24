@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
+import { etConfig } from '..'
 
 const getLocalIPList = () => {
   const ipList = Object.values(os.networkInterfaces())
@@ -30,10 +31,10 @@ export const printStartLogs = (port: number) => {
   console.log(seperator)
 }
 
-export const printStopLogs = (gracefulShutdown = false) => {
+export const printStopLogs = () => {
   console.log(seperator)
   console.log(
-    chalk.green(`Server${gracefulShutdown ? ' gracefully ' : ' '}stopped at: ` + new Date().toISOString() + '\n')
+    chalk.red(`Server${etConfig.gracefulShutdown ? ' gracefully ' : ' '}stopped at: ` + new Date().toISOString())
   )
   console.log(seperator)
 }

@@ -12,7 +12,7 @@ export default (app: Application, port = 8080): Server => {
     shuttingDown = true
 
     server.close()
-    printStopLogs(true)
+    printStopLogs()
 
     if (!etConfig.gracefulShutdown) process.exit(0)
   }
