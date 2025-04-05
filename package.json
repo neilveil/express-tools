@@ -1,7 +1,7 @@
 {
   "name": "express-tools",
   "description": "Strictly typed production ready no-configuration server",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "neilveil",
