@@ -1,17 +1,19 @@
-import * as ts from 'typescript'
 import * as fs from 'fs'
 import * as path from 'path'
+import * as ts from 'typescript'
 
 // Snippet to inject at the end
 const proxySnippet = () => `
 type typedBridgeConfig = {
   host: string
   headers: { [key: string]: string }
+  onResponse: (res: Response) => void
 }
 
 export const typedBridgeConfig: typedBridgeConfig = {
   host: '',
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
+  onResponse: (res: Response) => {}
 }
 
 export const typedBridge = new Proxy(
@@ -27,6 +29,9 @@ export const typedBridge = new Proxy(
             body: JSON.stringify(args)
           }
         )
+
+        typedBridgeConfig.onResponse(response)
+
         if (response.status !== 200) throw new Error('typed-bridge server error!')
         return response.json()
       }
