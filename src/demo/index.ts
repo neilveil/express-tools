@@ -38,7 +38,7 @@ type context = {
   authorization: string
 }
 
-etConfig.contextParser = (req: Request, res: Response): { next?: boolean; context?: context } => {
+etConfig.contextParser = async (req: Request, res: Response): Promise<{ next?: boolean; context?: context }> => {
   const headers = req.headers
   const bridge = req.originalUrl.split('/').pop()
 

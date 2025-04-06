@@ -10,7 +10,7 @@ export default (bridge: any): any =>
       if (!path) throw new Error('Bridge not found!')
 
       const controller = bridge[path]
-      const contextParserRes = config.contextParser(req, res)
+      const contextParserRes = await config.contextParser(req, res)
 
       if (contextParserRes && contextParserRes.next === false) return
 

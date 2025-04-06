@@ -5,8 +5,12 @@ export const controller = (handler: (args: any, context?: any) => any) => async 
   try {
     const _req: any = req
     const args = _req.bind.args
-    const context = config.contextParser(req, res)
-    const payload = await handler(args, context)
+    const contextParserRes = await config.contextParser(req, res)
+
+    if (contextParserRes && contextParserRes.next === false) return
+
+    const payload = await handler(args, contextParserRes?.context)
+
     res.json(payload)
   } catch (error: any) {
     res.status(500).send(error.message)
