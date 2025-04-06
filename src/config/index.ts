@@ -10,7 +10,7 @@ interface config {
   responseDelay: number
   gracefulShutdown: boolean
   validator: 'ajv' | 'joi' | 'zod'
-  contextParser: (req: Request, res: Response) => { next: boolean; context: any }
+  contextParser: (req: Request, res: Response) => { next?: boolean; context?: any } | void
 }
 
 export const config: config = {
@@ -23,5 +23,5 @@ export const config: config = {
   gracefulShutdown: false,
   idPrefix: '',
   validator: 'zod',
-  contextParser: () => ({ next: true, context: {} })
+  contextParser: () => {}
 }

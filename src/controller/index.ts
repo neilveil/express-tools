@@ -5,7 +5,7 @@ export const controller = (handler: (args: any, context?: any) => any) => async 
   try {
     const _req: any = req
     const args = _req.bind.args
-    const context = config.contextParser(req)
+    const context = config.contextParser(req, res)
     const payload = await handler(args, context)
     res.json(payload)
   } catch (error: any) {

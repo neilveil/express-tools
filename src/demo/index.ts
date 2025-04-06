@@ -1,11 +1,10 @@
-import { $z, _c, _v, createApp, createBridge, etConfig, Request, startServer } from '@/index'
+import { $z, _c, _v, createApp, createBridge, etConfig, Request, Response, startServer } from '@/index'
 import api from './api'
 import bridge from './bridge'
 
+etConfig.logs.error = true
 etConfig.logs.request = true
-etConfig.contextParser = (req: Request) => {
-  return req.originalUrl
-}
+etConfig.logs.response = true
 
 const app = createApp()
 startServer(app, 8080)
@@ -39,9 +38,21 @@ type context = {
   authorization: string
 }
 
-etConfig.contextParser = (req: Request): context => {
+etConfig.contextParser = (req: Request, res: Response): { next?: boolean; context?: context } => {
   const headers = req.headers
-  return { name: 'Express Tools', authorization: headers.authorization || 'NO_AUTH' }
+  const bridge = req.originalUrl.split('/').pop()
+
+  if (bridge === 'test.error') {
+    res.sendStatus(400)
+    return { next: false }
+  }
+
+  return {
+    context: {
+      name: 'Express Tools',
+      authorization: headers.authorization || 'NO_AUTH'
+    }
+  }
 }
 
 app.post(

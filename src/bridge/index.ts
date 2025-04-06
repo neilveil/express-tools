@@ -10,9 +10,11 @@ export default (bridge: any): any =>
       if (!path) throw new Error('Bridge not found!')
 
       const controller = bridge[path]
-      const { next, context } = config.contextParser(req, res)
+      const contextParserRes = config.contextParser(req, res)
 
-      if (next) res.json(await controller(args, context))
+      if (contextParserRes && contextParserRes.next === false) return
+
+      res.json(await controller(args, contextParserRes?.context))
     } catch (error: any) {
       if (config.validator === 'zod' && Array.isArray(error.errors)) {
         const keyPath = error.errors[0].path.join('/')
