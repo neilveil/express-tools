@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { Request, Response } from 'express'
 
 interface config {
   logs: {
@@ -10,7 +10,7 @@ interface config {
   responseDelay: number
   gracefulShutdown: boolean
   validator: 'ajv' | 'joi' | 'zod'
-  contextParser: (req: Request) => any
+  contextParser: (req: Request, res: Response) => { next: boolean; context: any }
 }
 
 export const config: config = {
@@ -23,5 +23,5 @@ export const config: config = {
   gracefulShutdown: false,
   idPrefix: '',
   validator: 'zod',
-  contextParser: () => {}
+  contextParser: () => ({ next: true, context: {} })
 }
