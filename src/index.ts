@@ -1,6 +1,4 @@
-import { loadENV } from './helpers'
-
-loadENV()
+import 'dotenv/config'
 
 export { default as createApp } from './app'
 export { default as createBridge } from './bridge'

@@ -1,7 +1,5 @@
 import chalk from 'chalk'
-import fs from 'fs'
 import os from 'os'
-import path from 'path'
 import { etConfig } from '..'
 
 const getLocalIPList = () => {
@@ -37,29 +35,4 @@ export const printStopLogs = () => {
     chalk.red(`Server${etConfig.gracefulShutdown ? ' gracefully ' : ' '}stopped at: ` + new Date().toISOString())
   )
   console.log(seperator)
-}
-
-export const loadENV = () => {
-  const envPath = path.join(process.cwd(), process.env.ET_ENVF || '.env')
-
-  const envExists = fs.existsSync(envPath) && fs.statSync(envPath).isFile()
-
-  if (envExists)
-    fs.readFileSync(envPath, { encoding: 'utf8' })
-      .split('\n')
-      .filter(x => !x.startsWith('#') && x.trim() && x.includes('='))
-      .forEach(x => {
-        const key = x.split('=')[0].trim()
-        const value = x
-          .split('=')
-          .slice(1)
-          .join('=')
-          .trim()
-          .replace(/^(['"])(.*)\1$/, '$2')
-        process.env[key] = value
-      })
-  else if (process.env.ET_ENVF) {
-    console.error(chalk.redBright(`"${envPath}" file not found!`))
-    process.exit(1)
-  }
 }

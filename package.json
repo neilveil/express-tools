@@ -23,6 +23,7 @@
     "commander": "^13.0.0",
     "compression": "^1.7.5",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "joi": "^17.13.3",
     "rollup": "^4.29.1",
